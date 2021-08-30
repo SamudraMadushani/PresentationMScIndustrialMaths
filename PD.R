@@ -84,3 +84,9 @@ TEMFBV4<-hwl_pca %>%
   geom_text_repel(aes(label=Series), max.overlaps = Inf)+
   geom_point(aes(col=seasonal_strength,size=seasonal_strength))+guides(size = FALSE)+
   labs(x="PC1", y = "PC2",title = "seasonal_strength")
+
+
+
+
+
+
