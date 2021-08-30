@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Hierarchical Forecasting of Dengue Incidence in Sri Lanka</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="L. S. Madushani" />
+    <meta name="author" content="IM 229" />
+    <script src="PPMOD_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Hierarchical Forecasting of Dengue Incidence in Sri Lanka
+### L. S. Madushani
+### IM 229
+### Supervisor: Dr. Thiyanga S Talagala
+
+---
+
+
+
+
+
+
+class: inverse center middle
+
+&lt;img src="Figures/F1.JPG" width="100%" height="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse center middle
+
+# Data
+
+---
+
+* Epidemiological unit, Ministry of Health, Sri Lanka.
+
+  *  https://www.epid.gov.lk/web/index.php?option=com_content&amp;view=article&amp;id=148&amp;Itemid=449&amp;lang=en
+
+* Format of the table in the Epidemiological Report
+
+&lt;img src="Figures/F3.JPG" width="100%" height="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Reading PDF files
+
+#### Reading_EpidemiologicalReports function
+
+
+```r
+#' path &lt;- setwd(here::here("pdffiles","2020"))
+#' startdate &lt;- c("2019-12-21","2019-12-27","2019-12-28","2020-01-03","2020-01-04","2020-01-10","2020-01-11","2020-01-17","2020-01-18","2020-01-24","2020-01-25","2020-01-31","2020-02-01","2020-02-07","2020-02-08","2020-02-14","2020-02-15","2020-02-21","2020-02-22","2020-02-28","2020-02-29","2020-03-06","2020-03-07","2020-03-13","2020-03-14","2020-03-20","2020-03-21","2020-03-27","2020-03-28","2020-04-03","2020-04-04","2020-04-10","2020-04-11","2020-04-17","2020-04-18","2020-04-24","2020-04-25","2020-05-01","2020-05-02","2020-05-08","2020-05-09","2020-05-15","2020-05-16","2020-05-22","2020-05-23","2020-05-29","2020-05-30","2020-06-05","2020-06-06","2020-06-12","2020-06-13","2020-06-19","2020-06-20","2020-06-26","2020-06-27","2020-07-03","2020-07-04","2020-07-10","2020-07-11","2020-07-17","2020-07-18","2020-07-24","2020-07-25","2020-07-31","2020-08-01","2020-08-07","2020-08-08","2020-08-14","2020-08-15","2020-08-21","2020-08-22","2020-08-28","2020-08-29","2020-09-04","2020-09-05","2020-09-11","2020-09-12","2020-09-18","2020-09-19","2020-09-25","2020-09-26","2020-10-02","2020-10-03","2020-10-09","2020-10-10","2020-10-16","2020-10-17","2020-10-23","2020-10-24","2020-10-30","2020-10-31","2020-11-06","2020-11-07","2020-11-13","2020-11-14","2020-11-20","2020-11-21","2020-11-27","2020-11-28","2020-12-04","2020-12-05","2020-12-11","2020-12-12","2020-12-18")
+#' year &lt;- c(2019,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020,2020)
+#' week &lt;- c(52,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51);
+#' Cname &lt;- c("Division","Dengue","Dengue B","Dysentery","Dysentery B","Encephalitis",
+#'        "Encephalitis B","Enteric Fever","Enteric Fever B","Food Poisioning",
+#'        "Food Poisioning B","Leptospirosis","Leptospirosis B","Typhus Fever",
+#'        "Typhus Fever B","Viral Hepatistis","Viral Hepatistis B","Human Rabies",
+#'        "Human Rabies B","Chickenpox","Chickenpox B","Meningitis",
+#'        "Meningitis B", "Leishmaniasis","Leishmaniasis B")
+#' DeletingRows &lt;- c(1,2,3,30,31,32,33,34)
+#' TotalColmns &lt;- 27
+#' PercentageColmns &lt;- c(26,27)
+#' DeleteColmns &lt;- c(3,5,7,9,11,13,15,17,19,21,23,25)
+#' Weeks_2020 &lt;- Reading_EpidemiologicalReports(path,startdate,year,week,Cname,DeletingRows,TotalColmns,PercentageColmns,DeleteColmns)
+```
+
+---
+
+# Reading PDF files
+
+&lt;img src="Figures/F7.JPG" width="70%" height="10%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Reading Excel files
+
+
+```r
+Processed_Data&lt;-function(processed_data_path)
+{
+  Disease_Counts_csv &lt;- list.files(path = ".", pattern = NULL, all.files = FALSE,
+                                   full.names = FALSE, recursive = FALSE,
+                                   ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
+  Data_Counts &lt;- tsibble::as_tibble (data.table::rbindlist (lapply (Disease_Counts_csv , data.table::fread),fill = T))
+  Data_Counts &lt;- dplyr::relocate(Data_Counts, Year,Week,StartDate,EndDate,.before=Division)
+  Data_Counts &lt;- dplyr::arrange(Data_Counts, StartDate)
+  setwd(here::here("data"))
+  save (Data_Counts, file = 'FinalData.Rda')
+  return(Data_Counts)
+}
+```
+
+---
+
+# DISC (DISease Counts) Package
+
+
+```
+## # A tibble: 18,980 x 18
+##       V1  Year  Week StartDate  EndDate    Division    Dengue Dysentery
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;        &lt;int&gt;     &lt;int&gt;
+##  1     1  2006    52 2006-12-23 2006-12-29 Colombo         71         2
+##  2     2  2006    52 2006-12-23 2006-12-29 Gampaha         12         0
+##  3     3  2006    52 2006-12-23 2006-12-29 Kalutara        12         6
+##  4     4  2006    52 2006-12-23 2006-12-29 Kandy           20         5
+##  5     5  2006    52 2006-12-23 2006-12-29 Matale           4         0
+##  6     6  2006    52 2006-12-23 2006-12-29 NuwaraEliya      1         1
+##  7     7  2006    52 2006-12-23 2006-12-29 Galle            1         2
+##  8     8  2006    52 2006-12-23 2006-12-29 Hambanthota      1         1
+##  9     9  2006    52 2006-12-23 2006-12-29 Matara          11         3
+## 10    10  2006    52 2006-12-23 2006-12-29 Jaffna           0         0
+## # ... with 18,970 more rows, and 10 more variables: Encephalitis &lt;int&gt;,
+## #   Enteric Fever &lt;int&gt;, Food Poisioning &lt;int&gt;, Leptospirosis &lt;int&gt;,
+## #   Typhus Fever &lt;int&gt;, Viral Hepatistis &lt;int&gt;, Human Rabies &lt;int&gt;,
+## #   Chickenpox &lt;int&gt;, Meningitis &lt;int&gt;, Leishmaniasis &lt;dbl&gt;
+```
+
+---
+
+# DISC (DISease Counts) Package
+
+
+&lt;img src="Figures/F8M.JPG" width="25%" height="25%" style="display: block; margin: auto;" /&gt;
+
+
+```r
+#install.packages("remotes")
+#remotes::install_github("SMART-Research/DISC")
+```
+
+---
+
+# Dengue counts data
+
+
+
+.left-column[
+&lt;img src="Figures/tsibble.JPG" width="80%" height="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-column[
+
+```r
+DengueTEST&lt;-tibble(Week,Date,Counts,Districts,Province)
+DataDengueTEST&lt;- DengueTEST%&gt;% 
+* as_tsibble(key=c(Province,Districts),index=Week)
+DataDengueTEST
+```
+
+```
+*## # A tsibble: 18,980 x 5 [1W]
+*## # Key:       Province, Districts [26]
+##        Week Date       Counts Districts Province
+##      &lt;week&gt; &lt;date&gt;      &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   
+##  1 2006 W52 2006-12-29     20 Kandy     Central 
+##  2 2007 W01 2007-01-05     41 Kandy     Central 
+##  3 2007 W02 2007-01-12     28 Kandy     Central 
+##  4 2007 W03 2007-01-19     14 Kandy     Central 
+##  5 2007 W04 2007-01-26     17 Kandy     Central 
+##  6 2007 W05 2007-02-02     16 Kandy     Central 
+##  7 2007 W06 2007-02-09     10 Kandy     Central 
+##  8 2007 W07 2007-02-16      5 Kandy     Central 
+##  9 2007 W08 2007-02-23      5 Kandy     Central 
+## 10 2007 W09 2007-03-02      7 Kandy     Central 
+## # ... with 18,970 more rows
+```
+]
+
+---
+
+class: inverse center middle
+
+&lt;img src="Figures/F9.JPG" width="100%" height="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse center middle
+
+# Data Visualization
+
+---
+
+# Data Visualization
+
+*   Time domain visualization
+
+*   Feature based visualization
+
+*   Change point analysis
+
+---
+# Time domain visualization-Districts
+
+
+
+
+
+&lt;img src="Figures/DP.JPG" width="90%" height="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Time domain visualization-Districts
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-8-1.png" width="100%" height="100%" /&gt;
+
+---
+
+# Feature-based visualization
+
+&lt;img src="Figures/FB1.JPG" width="100%" height="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Time series features
+
+.left-column[
+&lt;img src="Figures/feasts.JPG" width="80%" height="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-column[
+
+```r
+Dengue_features&lt;-DataDengueTEST %&gt;% 
+                 features(Counts, feature_set(pkgs = "feasts"))
+colnames(Dengue_features[,-c(1:2)])
+```
+
+```
+##  [1] "trend_strength"         "seasonal_strength_year" "seasonal_peak_year"    
+##  [4] "seasonal_trough_year"   "spikiness"              "linearity"             
+##  [7] "curvature"              "stl_e_acf1"             "stl_e_acf10"           
+## [10] "acf1"                   "acf10"                  "diff1_acf1"            
+## [13] "diff1_acf10"            "diff2_acf1"             "diff2_acf10"           
+## [16] "season_acf1"            "pacf5"                  "diff1_pacf5"           
+## [19] "diff2_pacf5"            "season_pacf"            "zero_run_mean"         
+## [22] "nonzero_squared_cv"     "zero_start_prop"        "zero_end_prop"         
+## [25] "lambda_guerrero"        "kpss_stat"              "kpss_pvalue"           
+## [28] "pp_stat"                "pp_pvalue"              "ndiffs"                
+## [31] "nsdiffs"                "bp_stat"                "bp_pvalue"             
+## [34] "lb_stat"                "lb_pvalue"              "var_tiled_var"         
+## [37] "var_tiled_mean"         "shift_level_max"        "shift_level_index"     
+## [40] "shift_var_max"          "shift_var_index"        "shift_kl_max"          
+## [43] "shift_kl_index"         "spectral_entropy"       "n_crossing_points"     
+## [46] "longest_flat_spot"      "coef_hurst"             "stat_arch_lm"
+```
+]
+
+---
+
+# Spatial hierarchical structure
+
+&lt;img src="Figures/F10.JPG" width="80%" height="10%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Time series features
+
+
+
+
+
+```r
+Dengue_features&lt;-SHS_DataDengueTEST %&gt;% features(Counts, feature_set(pkgs = "feasts"))
+Dengue_features
+```
+
+```
+## # A tibble: 36 x 50
+##    Province     Districts   trend_strength seasonal_strength_~ seasonal_peak_ye~
+##    &lt;chr*&gt;       &lt;chr*&gt;               &lt;dbl&gt;               &lt;dbl&gt;             &lt;dbl&gt;
+##  1 Central      Kandy     ~          0.542               0.245                33
+##  2 Central      Matale    ~          0.445               0.194                50
+##  3 Central      NuwaraEliy~          0.351               0.203                33
+##  4 Central      &lt;aggregate~          0.529               0.230                31
+##  5 Eastern      Ampara    ~          0.463               0.140                33
+##  6 Eastern      Batticaloa~          0.508               0.272                 2
+##  7 Eastern      Kalmune   ~          0.414               0.162                27
+##  8 Eastern      Trincomale~          0.377               0.209                 6
+##  9 Eastern      &lt;aggregate~          0.548               0.264                 6
+## 10 NorthCentral Anuradhapu~          0.465               0.154                30
+## # ... with 26 more rows, and 45 more variables: seasonal_trough_year &lt;dbl&gt;,
+## #   spikiness &lt;dbl&gt;, linearity &lt;dbl&gt;, curvature &lt;dbl&gt;, stl_e_acf1 &lt;dbl&gt;,
+## #   stl_e_acf10 &lt;dbl&gt;, acf1 &lt;dbl&gt;, acf10 &lt;dbl&gt;, diff1_acf1 &lt;dbl&gt;,
+## #   diff1_acf10 &lt;dbl&gt;, diff2_acf1 &lt;dbl&gt;, diff2_acf10 &lt;dbl&gt;, season_acf1 &lt;dbl&gt;,
+## #   pacf5 &lt;dbl&gt;, diff1_pacf5 &lt;dbl&gt;, diff2_pacf5 &lt;dbl&gt;, season_pacf &lt;dbl&gt;,
+## #   zero_run_mean &lt;dbl&gt;, nonzero_squared_cv &lt;dbl&gt;, zero_start_prop &lt;dbl&gt;,
+## #   zero_end_prop &lt;dbl&gt;, lambda_guerrero &lt;dbl&gt;, kpss_stat &lt;dbl&gt;,
+## #   kpss_pvalue &lt;dbl&gt;, pp_stat &lt;dbl&gt;, pp_pvalue &lt;dbl&gt;, ndiffs &lt;int&gt;,
+## #   nsdiffs &lt;int&gt;, bp_stat &lt;dbl&gt;, bp_pvalue &lt;dbl&gt;, lb_stat &lt;dbl&gt;,
+## #   lb_pvalue &lt;dbl&gt;, var_tiled_var &lt;dbl&gt;, var_tiled_mean &lt;dbl&gt;,
+## #   shift_level_max &lt;dbl&gt;, shift_level_index &lt;dbl&gt;, shift_var_max &lt;dbl&gt;,
+## #   shift_var_index &lt;dbl&gt;, shift_kl_max &lt;dbl&gt;, shift_kl_index &lt;dbl&gt;,
+## #   spectral_entropy &lt;dbl&gt;, n_crossing_points &lt;int&gt;, longest_flat_spot &lt;int&gt;,
+## #   coef_hurst &lt;dbl&gt;, stat_arch_lm &lt;dbl&gt;
+```
+
+---
+
+# Feature-based visualization
+
+&lt;img src="Figures/FB3.JPG" width="60%" height="20%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Excluded features from PCA
+
+
+```
+## # A tibble: 36 x 6
+##    Province     Districts    pp_pvalue nsdiffs bp_pvalue lb_pvalue
+##    &lt;chr*&gt;       &lt;chr*&gt;           &lt;dbl&gt;   &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Central      Kandy             0.01       0         0         0
+##  2 Central      Matale            0.01       0         0         0
+##  3 Central      NuwaraEliya       0.01       0         0         0
+##  4 Central      &lt;aggregated&gt;      0.01       0         0         0
+##  5 Eastern      Ampara            0.01       0         0         0
+##  6 Eastern      Batticaloa        0.01       0         0         0
+##  7 Eastern      Kalmune           0.01       0         0         0
+##  8 Eastern      Trincomalee       0.01       0         0         0
+##  9 Eastern      &lt;aggregated&gt;      0.01       0         0         0
+## 10 NorthCentral Anuradhapura      0.01       0         0         0
+## # ... with 26 more rows
+```
+
+---
+
+# Principal Component Analysis
+
+
+
+
+```r
+pcs&lt;-Dengue_features%&gt;% dplyr::select(-c(1,2,31,33,35,37)) %&gt;% prcomp(scale = TRUE) %&gt;%
+  augment(Dengue_features)
+pcs
+```
+
+```
+## # A tibble: 36 x 87
+##    .rownames Province     Districts    trend_strength seasonal_strength_year
+##    &lt;chr&gt;     &lt;chr*&gt;       &lt;chr*&gt;                &lt;dbl&gt;                  &lt;dbl&gt;
+##  1 1         Central      Kandy                 0.542                  0.245
+##  2 2         Central      Matale                0.445                  0.194
+##  3 3         Central      NuwaraEliya           0.351                  0.203
+##  4 4         Central      &lt;aggregated&gt;          0.529                  0.230
+##  5 5         Eastern      Ampara                0.463                  0.140
+##  6 6         Eastern      Batticaloa            0.508                  0.272
+##  7 7         Eastern      Kalmune               0.414                  0.162
+##  8 8         Eastern      Trincomalee           0.377                  0.209
+##  9 9         Eastern      &lt;aggregated&gt;          0.548                  0.264
+## 10 10        NorthCentral Anuradhapura          0.465                  0.154
+## # ... with 26 more rows, and 82 more variables: seasonal_peak_year &lt;dbl&gt;,
+## #   seasonal_trough_year &lt;dbl&gt;, spikiness &lt;dbl&gt;, linearity &lt;dbl&gt;,
+## #   curvature &lt;dbl&gt;, stl_e_acf1 &lt;dbl&gt;, stl_e_acf10 &lt;dbl&gt;, acf1 &lt;dbl&gt;,
+## #   acf10 &lt;dbl&gt;, diff1_acf1 &lt;dbl&gt;, diff1_acf10 &lt;dbl&gt;, diff2_acf1 &lt;dbl&gt;,
+## #   diff2_acf10 &lt;dbl&gt;, season_acf1 &lt;dbl&gt;, pacf5 &lt;dbl&gt;, diff1_pacf5 &lt;dbl&gt;,
+## #   diff2_pacf5 &lt;dbl&gt;, season_pacf &lt;dbl&gt;, zero_run_mean &lt;dbl&gt;,
+## #   nonzero_squared_cv &lt;dbl&gt;, zero_start_prop &lt;dbl&gt;, zero_end_prop &lt;dbl&gt;,
+## #   lambda_guerrero &lt;dbl&gt;, kpss_stat &lt;dbl&gt;, kpss_pvalue &lt;dbl&gt;, pp_stat &lt;dbl&gt;,
+## #   pp_pvalue &lt;dbl&gt;, ndiffs &lt;int&gt;, nsdiffs &lt;int&gt;, bp_stat &lt;dbl&gt;,
+## #   bp_pvalue &lt;dbl&gt;, lb_stat &lt;dbl&gt;, lb_pvalue &lt;dbl&gt;, var_tiled_var &lt;dbl&gt;,
+## #   var_tiled_mean &lt;dbl&gt;, shift_level_max &lt;dbl&gt;, shift_level_index &lt;dbl&gt;,
+## #   shift_var_max &lt;dbl&gt;, shift_var_index &lt;dbl&gt;, shift_kl_max &lt;dbl&gt;,
+## #   shift_kl_index &lt;dbl&gt;, spectral_entropy &lt;dbl&gt;, n_crossing_points &lt;int&gt;,
+## #   longest_flat_spot &lt;int&gt;, coef_hurst &lt;dbl&gt;, stat_arch_lm &lt;dbl&gt;,
+## #   .fittedPC1 &lt;dbl&gt;, .fittedPC2 &lt;dbl&gt;, .fittedPC3 &lt;dbl&gt;, .fittedPC4 &lt;dbl&gt;,
+## #   .fittedPC5 &lt;dbl&gt;, .fittedPC6 &lt;dbl&gt;, .fittedPC7 &lt;dbl&gt;, .fittedPC8 &lt;dbl&gt;,
+## #   .fittedPC9 &lt;dbl&gt;, .fittedPC10 &lt;dbl&gt;, .fittedPC11 &lt;dbl&gt;, .fittedPC12 &lt;dbl&gt;,
+## #   .fittedPC13 &lt;dbl&gt;, .fittedPC14 &lt;dbl&gt;, .fittedPC15 &lt;dbl&gt;, .fittedPC16 &lt;dbl&gt;,
+## #   .fittedPC17 &lt;dbl&gt;, .fittedPC18 &lt;dbl&gt;, .fittedPC19 &lt;dbl&gt;, .fittedPC20 &lt;dbl&gt;,
+## #   .fittedPC21 &lt;dbl&gt;, .fittedPC22 &lt;dbl&gt;, .fittedPC23 &lt;dbl&gt;, .fittedPC24 &lt;dbl&gt;,
+## #   .fittedPC25 &lt;dbl&gt;, .fittedPC26 &lt;dbl&gt;, .fittedPC27 &lt;dbl&gt;, .fittedPC28 &lt;dbl&gt;,
+## #   .fittedPC29 &lt;dbl&gt;, .fittedPC30 &lt;dbl&gt;, .fittedPC31 &lt;dbl&gt;, .fittedPC32 &lt;dbl&gt;,
+## #   .fittedPC33 &lt;dbl&gt;, .fittedPC34 &lt;dbl&gt;, .fittedPC35 &lt;dbl&gt;, .fittedPC36 &lt;dbl&gt;
+```
+
+
+---
+
+# Feature-based visualization 
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-15-1.png" width="100%" height="100%" /&gt;
+
+
+---
+
+# Feature-based visualization 
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-16-1.png" width="100%" height="100%" /&gt;
+
+---
+
+# Feature-based visualization 
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-17-1.png" width="100%" height="100%" /&gt;
+
+---
+
+# Temporal hierarchical structure
+
+&lt;img src="Figures/F11.JPG" width="100%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Temporal hierarchical structure
+
+&lt;img src="PPMOD_files/figure-html/figurechapter0005V2-1.png" width="100%" height="80%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Temporal hierarchical time series features
+
+
+```r
+library(tsfeatures)
+Temporal_DengueFeatures&lt;-tsfeatures(aggts_total)
+Temporal_DengueFeatures
+```
+
+```
+## # A tibble: 6 x 20
+##   frequency nperiods seasonal_period trend    spike linearity curvature   e_acf1
+##       &lt;dbl&gt;    &lt;dbl&gt;           &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1        52        1              52 0.624  8.42e-6     10.4    -0.753   0.918  
+## 2        26        1              26 0.637  2.87e-5      7.42   -0.539   0.875  
+## 3        13        1              13 0.646  1.10e-4      5.30   -0.387   0.670  
+## 4         4        1               4 0.803  1.33e-4      3.31   -0.193  -0.00993
+## 5         2        1               2 0.858  1.20e-4      2.65   -0.130  -0.225  
+## 6         1        0               1 0.387  1.73e-2      1.86    0.0990 -0.312  
+## # ... with 12 more variables: e_acf10 &lt;dbl&gt;, seasonal_strength &lt;dbl&gt;,
+## #   peak &lt;dbl&gt;, trough &lt;dbl&gt;, entropy &lt;dbl&gt;, x_acf1 &lt;dbl&gt;, x_acf10 &lt;dbl&gt;,
+## #   diff1_acf1 &lt;dbl&gt;, diff1_acf10 &lt;dbl&gt;, diff2_acf1 &lt;dbl&gt;, diff2_acf10 &lt;dbl&gt;,
+## #   seas_acf1 &lt;dbl&gt;
+```
+
+---
+
+# Excluded features from PCA
+
+
+```r
+Temporal_DengueFeatures[,c(1,10,11,12,20)]
+```
+
+```
+## # A tibble: 6 x 5
+##   frequency seasonal_strength  peak trough seas_acf1
+##       &lt;dbl&gt;             &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+## 1        52             0.197    29     15    0.115 
+## 2        26             0.198    NA     NA    0.115 
+## 3        13             0.194    NA     NA    0.112 
+## 4         4             0.127    NA     NA    0.0848
+## 5         2             0.152    NA     NA    0.107 
+## 6         1            NA        NA     NA   NA
+```
+
+---
+
+
+```r
+pr&lt;-prcomp(Temporal_DengueFeatures[,-c(1,10,11,12,20)],scale=TRUE)
+```
+
+
+```
+##                         PC1         PC2          PC3         PC4          PC5
+## nperiods        -0.25015548 -0.28306798  0.299866965  0.01988237  0.007459788
+## seasonal_period -0.26393969  0.28696832  0.051139488  0.16303439 -0.244602267
+## trend           -0.09254692 -0.39342459  0.562003922  0.23531453 -0.135247539
+## spike            0.25145370  0.28050411 -0.297809299 -0.02335294 -0.001276768
+## linearity       -0.29083944  0.21011259 -0.031900922  0.10972732 -0.152059601
+## curvature        0.31192980 -0.10402723 -0.007253597 -0.04667976  0.091712803
+## e_acf1          -0.29732670  0.09201381 -0.284236582 -0.16433035  0.050736230
+## e_acf10         -0.27433076  0.25869783  0.090604802  0.14905812 -0.085168189
+## entropy          0.31200170 -0.06298042  0.041681702 -0.13890553 -0.444682399
+## x_acf1          -0.31472933 -0.05671347 -0.055218270 -0.04434709  0.304305957
+## x_acf10         -0.27623217  0.25043429 -0.028667800  0.20947811 -0.230628829
+## diff1_acf1      -0.26923753 -0.24242777 -0.247527226  0.13422669  0.156890037
+## diff1_acf10      0.23382294 -0.13827817 -0.299265752  0.84766649 -0.067098135
+## diff2_acf1      -0.15220880 -0.41990568 -0.356888142 -0.01091912  0.248299360
+## diff2_acf10      0.16547661  0.38675965  0.359233481  0.22770006  0.667949089
+##                         PC6
+## nperiods         0.05095289
+## seasonal_period  0.20850432
+## trend           -0.13106000
+## spike           -0.09833377
+## linearity       -0.24328398
+## curvature        0.19919255
+## e_acf1          -0.14702223
+## e_acf10         -0.01605061
+## entropy         -0.72184055
+## x_acf1          -0.08218608
+## x_acf10         -0.13862312
+## diff1_acf1      -0.27951201
+## diff1_acf10      0.06089076
+## diff2_acf1      -0.20758438
+## diff2_acf10     -0.36659915
+```
+
+---
+
+# Feature-based visualization
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-22-1.png" width="100%" height="100%" /&gt;
+
+---
+
+# Feature-based visualization
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-23-1.png" width="100%" height="100%" /&gt;
+
+---
+
+class: inverse center middle
+
+&lt;img src="Figures/FL1.JPG" width="100%" height="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse center middle
+
+# Forecasting modeling
+
+---
+
+# Spatial hierarchical structure
+
+&lt;img src="Figures/F10.JPG" width="80%" height="10%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S1.JPG" width="60%" height="40%" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+
+```r
+DengueTEST&lt;-tibble(Week,Date,Counts,Districts,Province)
+DengueTRAIN&lt;-DengueTEST%&gt;%dplyr::filter(lubridate::year(Week)&lt;2020)
+DataDengueTRAIN&lt;-DengueTRAIN%&gt;% 
+* as_tsibble(key=c(Province,Districts),index=Week)
+DataDengueTRAIN
+```
+
+```
+*## # A tsibble: 17,654 x 5 [1W]
+*## # Key:       Province, Districts [26]
+##        Week Date       Counts Districts Province
+##      &lt;week&gt; &lt;date&gt;      &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   
+##  1 2006 W52 2006-12-29     20 Kandy     Central 
+##  2 2007 W01 2007-01-05     41 Kandy     Central 
+##  3 2007 W02 2007-01-12     28 Kandy     Central 
+##  4 2007 W03 2007-01-19     14 Kandy     Central 
+##  5 2007 W04 2007-01-26     17 Kandy     Central 
+##  6 2007 W05 2007-02-02     16 Kandy     Central 
+##  7 2007 W06 2007-02-09     10 Kandy     Central 
+##  8 2007 W07 2007-02-16      5 Kandy     Central 
+##  9 2007 W08 2007-02-23      5 Kandy     Central 
+## 10 2007 W09 2007-03-02      7 Kandy     Central 
+## # ... with 17,644 more rows
+```
+
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S2.JPG" width="60%" height="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+
+```r
+HS_DataDengueTRAIN&lt;-DataDengueTRAIN%&gt;%
+*         fabletools::aggregate_key(Province/Districts,Counts=sum(Counts))
+
+HS_DataDengueTRAIN
+```
+
+```
+*## # A tsibble: 24,444 x 4 [1W]
+*## # Key:       Province, Districts [36]
+##        Week Province     Districts    Counts
+##      &lt;week&gt; &lt;chr*&gt;       &lt;chr*&gt;        &lt;int&gt;
+##  1 2006 W52 &lt;aggregated&gt; &lt;aggregated&gt;    167
+##  2 2007 W01 &lt;aggregated&gt; &lt;aggregated&gt;    181
+##  3 2007 W02 &lt;aggregated&gt; &lt;aggregated&gt;    163
+##  4 2007 W03 &lt;aggregated&gt; &lt;aggregated&gt;    131
+##  5 2007 W04 &lt;aggregated&gt; &lt;aggregated&gt;    144
+##  6 2007 W05 &lt;aggregated&gt; &lt;aggregated&gt;    144
+##  7 2007 W06 &lt;aggregated&gt; &lt;aggregated&gt;    108
+##  8 2007 W07 &lt;aggregated&gt; &lt;aggregated&gt;     75
+##  9 2007 W08 &lt;aggregated&gt; &lt;aggregated&gt;     72
+## 10 2007 W09 &lt;aggregated&gt; &lt;aggregated&gt;     59
+## # ... with 24,434 more rows
+```
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/SPST.JPG" width="85%" height="10%" style="display: block; margin: auto;" /&gt;
+
+---
+
+#### District level
+
+
+```r
+HS_DataDengueTRAIN%&gt;% dplyr::filter(!is_aggregated(Districts)&amp; !is_aggregated(Province))%&gt;%print(n=3)
+```
+
+```
+## # A tsibble: 17,654 x 4 [1W]
+## # Key:       Province, Districts [26]
+##       Week Province Districts   Counts
+##     &lt;week&gt; &lt;chr*&gt;   &lt;chr*&gt;       &lt;int&gt;
+*## 1 2006 W52 Central  Kandy           20
+*## 2 2006 W52 Central  Matale           4
+*## 3 2006 W52 Central  NuwaraEliya      1
+## # ... with 17,651 more rows
+```
+
+#### Province level
+
+
+```r
+HS_DataDengueTRAIN%&gt;% dplyr::filter(is_aggregated(Districts)&amp; !is_aggregated(Province))%&gt;%print(n=3)
+```
+
+```
+## # A tsibble: 6,111 x 4 [1W]
+## # Key:       Province, Districts [9]
+##       Week Province     Districts    Counts
+##     &lt;week&gt; &lt;chr*&gt;       &lt;chr*&gt;        &lt;int&gt;
+*## 1 2006 W52 Central      &lt;aggregated&gt;     25
+## 2 2006 W52 Eastern      &lt;aggregated&gt;      0
+## 3 2006 W52 NorthCentral &lt;aggregated&gt;      5
+## # ... with 6,108 more rows
+```
+
+---
+#### Country level
+
+
+```r
+HS_DataDengueTRAIN%&gt;% dplyr::filter(is_aggregated(Districts)&amp; is_aggregated(Province))%&gt;%print(n=13)
+```
+
+```
+## # A tsibble: 679 x 4 [1W]
+## # Key:       Province, Districts [1]
+##        Week Province     Districts    Counts
+##      &lt;week&gt; &lt;chr*&gt;       &lt;chr*&gt;        &lt;int&gt;
+##  1 2006 W52 &lt;aggregated&gt; &lt;aggregated&gt;    167
+##  2 2007 W01 &lt;aggregated&gt; &lt;aggregated&gt;    181
+##  3 2007 W02 &lt;aggregated&gt; &lt;aggregated&gt;    163
+##  4 2007 W03 &lt;aggregated&gt; &lt;aggregated&gt;    131
+##  5 2007 W04 &lt;aggregated&gt; &lt;aggregated&gt;    144
+##  6 2007 W05 &lt;aggregated&gt; &lt;aggregated&gt;    144
+##  7 2007 W06 &lt;aggregated&gt; &lt;aggregated&gt;    108
+##  8 2007 W07 &lt;aggregated&gt; &lt;aggregated&gt;     75
+##  9 2007 W08 &lt;aggregated&gt; &lt;aggregated&gt;     72
+## 10 2007 W09 &lt;aggregated&gt; &lt;aggregated&gt;     59
+## 11 2007 W10 &lt;aggregated&gt; &lt;aggregated&gt;     75
+## 12 2007 W11 &lt;aggregated&gt; &lt;aggregated&gt;     61
+## 13 2007 W12 &lt;aggregated&gt; &lt;aggregated&gt;     35
+## # ... with 666 more rows
+```
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S3.JPG" width="60%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+
+
+.left-column[
+&lt;img src="Figures/fable.JPG" width="80%" height="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-column[
+
+```r
+HS_DataDengueTRAIN%&gt;%
+    model(arima =ARIMA(Counts),snaive=SNAIVE(Counts),naive=NAIVE(Counts),ets=ETS(Counts),avg = MEAN(Counts))%&gt;% forecast(h =52)%&gt;%print(n=5)
+```
+
+```
+## # A fable: 9,360 x 6 [1W]
+## # Key:     Province, Districts, .model [180]
+##   Province Districts .model     Week       Counts .mean
+##   &lt;chr*&gt;   &lt;chr*&gt;    &lt;chr&gt;    &lt;week&gt;       &lt;dist&gt; &lt;dbl&gt;
+## 1 Central  Kandy     arima  2020 W01  N(233, 988)  233.
+## 2 Central  Kandy     arima  2020 W02 N(227, 1439)  227.
+## 3 Central  Kandy     arima  2020 W03 N(231, 2597)  231.
+## 4 Central  Kandy     arima  2020 W04 N(241, 4313)  241.
+## 5 Central  Kandy     arima  2020 W05 N(255, 6242)  255.
+## # ... with 9,355 more rows
+```
+]
+
+---
+
+# Base forecasts - SNAIVE method
+
+
+```
+## # A fable: 20 x 6 [1W]
+## # Key:     Province, Districts, .model [20]
+##    Province Districts    .model     Week       Counts  .mean
+##    &lt;chr*&gt;   &lt;chr*&gt;       &lt;chr&gt;    &lt;week&gt;       &lt;dist&gt;  &lt;dbl&gt;
+##  1 Central  Kandy        arima  2020 W01  N(233, 988) 233.  
+*##  2 Central  Kandy        snaive 2020 W01 N(53, 19885)  53   
+##  3 Central  Kandy        naive  2020 W01 N(273, 1326) 273   
+##  4 Central  Kandy        ets    2020 W01 N(224, 1121) 224.  
+##  5 Central  Kandy        avg    2020 W01 N(62, 12804)  61.9 
+##  6 Central  Matale       arima  2020 W01  N(127, 146) 127.  
+*##  7 Central  Matale       snaive 2020 W01  N(19, 1481)  19   
+##  8 Central  Matale       naive  2020 W01  N(128, 155) 128   
+##  9 Central  Matale       ets    2020 W01  N(134, 150) 134.  
+## 10 Central  Matale       avg    2020 W01   N(17, 921)  16.6 
+## 11 Central  NuwaraEliya  arima  2020 W01    N(18, 20)  17.9 
+*## 12 Central  NuwaraEliya  snaive 2020 W01     N(9, 98)   9   
+## 13 Central  NuwaraEliya  naive  2020 W01    N(22, 25)  22   
+## 14 Central  NuwaraEliya  ets    2020 W01    N(20, 21)  19.6 
+## 15 Central  NuwaraEliya  avg    2020 W01   N(5.1, 59)   5.14
+## 16 Central  &lt;aggregated&gt; arima  2020 W01 N(341, 1566) 341.  
+*## 17 Central  &lt;aggregated&gt; snaive 2020 W01 N(81, 33418)  81   
+## 18 Central  &lt;aggregated&gt; naive  2020 W01 N(423, 2042) 423   
+## 19 Central  &lt;aggregated&gt; ets    2020 W01 N(350, 1756) 350.  
+## 20 Central  &lt;aggregated&gt; avg    2020 W01 N(84, 21335)  83.6
+```
+
+---
+
+# Base forecasts - NAIVE method
+
+
+```
+## # A fable: 20 x 6 [1W]
+## # Key:     Province, Districts, .model [20]
+##    Province Districts    .model     Week       Counts  .mean
+##    &lt;chr*&gt;   &lt;chr*&gt;       &lt;chr&gt;    &lt;week&gt;       &lt;dist&gt;  &lt;dbl&gt;
+##  1 Central  Kandy        arima  2020 W01  N(233, 988) 233.  
+##  2 Central  Kandy        snaive 2020 W01 N(53, 19885)  53   
+*##  3 Central  Kandy        naive  2020 W01 N(273, 1326) 273   
+##  4 Central  Kandy        ets    2020 W01 N(224, 1121) 224.  
+##  5 Central  Kandy        avg    2020 W01 N(62, 12804)  61.9 
+##  6 Central  Matale       arima  2020 W01  N(127, 146) 127.  
+##  7 Central  Matale       snaive 2020 W01  N(19, 1481)  19   
+*##  8 Central  Matale       naive  2020 W01  N(128, 155) 128   
+##  9 Central  Matale       ets    2020 W01  N(134, 150) 134.  
+## 10 Central  Matale       avg    2020 W01   N(17, 921)  16.6 
+## 11 Central  NuwaraEliya  arima  2020 W01    N(18, 20)  17.9 
+## 12 Central  NuwaraEliya  snaive 2020 W01     N(9, 98)   9   
+*## 13 Central  NuwaraEliya  naive  2020 W01    N(22, 25)  22   
+## 14 Central  NuwaraEliya  ets    2020 W01    N(20, 21)  19.6 
+## 15 Central  NuwaraEliya  avg    2020 W01   N(5.1, 59)   5.14
+## 16 Central  &lt;aggregated&gt; arima  2020 W01 N(341, 1566) 341.  
+## 17 Central  &lt;aggregated&gt; snaive 2020 W01 N(81, 33418)  81   
+*## 18 Central  &lt;aggregated&gt; naive  2020 W01 N(423, 2042) 423   
+## 19 Central  &lt;aggregated&gt; ets    2020 W01 N(350, 1756) 350.  
+## 20 Central  &lt;aggregated&gt; avg    2020 W01 N(84, 21335)  83.6
+```
+
+---
+
+# Base forecasts - Average method
+
+
+```
+## # A fable: 20 x 6 [1W]
+## # Key:     Province, Districts, .model [20]
+##    Province Districts    .model     Week       Counts  .mean
+##    &lt;chr*&gt;   &lt;chr*&gt;       &lt;chr&gt;    &lt;week&gt;       &lt;dist&gt;  &lt;dbl&gt;
+##  1 Central  Kandy        arima  2020 W01  N(233, 988) 233.  
+##  2 Central  Kandy        snaive 2020 W01 N(53, 19885)  53   
+##  3 Central  Kandy        naive  2020 W01 N(273, 1326) 273   
+##  4 Central  Kandy        ets    2020 W01 N(224, 1121) 224.  
+*##  5 Central  Kandy        avg    2020 W01 N(62, 12804)  61.9 
+##  6 Central  Matale       arima  2020 W01  N(127, 146) 127.  
+##  7 Central  Matale       snaive 2020 W01  N(19, 1481)  19   
+##  8 Central  Matale       naive  2020 W01  N(128, 155) 128   
+##  9 Central  Matale       ets    2020 W01  N(134, 150) 134.  
+*## 10 Central  Matale       avg    2020 W01   N(17, 921)  16.6 
+## 11 Central  NuwaraEliya  arima  2020 W01    N(18, 20)  17.9 
+## 12 Central  NuwaraEliya  snaive 2020 W01     N(9, 98)   9   
+## 13 Central  NuwaraEliya  naive  2020 W01    N(22, 25)  22   
+## 14 Central  NuwaraEliya  ets    2020 W01    N(20, 21)  19.6 
+*## 15 Central  NuwaraEliya  avg    2020 W01   N(5.1, 59)   5.14
+## 16 Central  &lt;aggregated&gt; arima  2020 W01 N(341, 1566) 341.  
+## 17 Central  &lt;aggregated&gt; snaive 2020 W01 N(81, 33418)  81   
+## 18 Central  &lt;aggregated&gt; naive  2020 W01 N(423, 2042) 423   
+## 19 Central  &lt;aggregated&gt; ets    2020 W01 N(350, 1756) 350.  
+*## 20 Central  &lt;aggregated&gt; avg    2020 W01 N(84, 21335)  83.6
+```
+
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S4.JPG" width="50%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+
+```r
+fit_TRAIN &lt;- HS_DataDengueTRAIN%&gt;%
+    model(arima =ARIMA(Counts),snaive=SNAIVE(Counts),naive=NAIVE(Counts),ets=ETS(Counts),avg =     MEAN(Counts))%&gt;%
+*   fabletools::reconcile(bu_arima = bottom_up(arima),
+*                         top_arima=top_down(arima),
+*                         ols_arima=min_trace(arima,method="ols"),
+*                         MinT_arima=min_trace(arima,method="mint_shrink"),
+*                         wls_var_arima = min_trace(arima,method="wls_var"),
+*                         wls_struct_arima=min_trace(arima,method="wls_struct"),
+*                         MinT_cov_arima=min_trace(arima,method="mint_cov"),
+*                         bu_ets = bottom_up(ets),
+*                         top_ets=top_down(ets),
+*                         ols_ets=min_trace(ets,method="ols"),
+*                         MinT_ets=min_trace(ets,method="mint_shrink"),
+*                         wls_var_ets = min_trace(ets,method="wls_var"),
+*                         wls_struct_ets=min_trace(ets,method="wls_struct"),
+*                         MinT_cov_ets=min_trace(ets,method="mint_cov"))
+```
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S5.JPG" width="50%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+
+```r
+fc_TRAIN &lt;- fit_TRAIN %&gt;% forecast(h = 52)
+fc_TRAIN
+```
+
+```
+## # A fable: 35,568 x 6 [1W]
+## # Key:     Province, Districts, .model [684]
+##    Province Districts .model     Week        Counts .mean
+##    &lt;chr*&gt;   &lt;chr*&gt;    &lt;chr&gt;    &lt;week&gt;        &lt;dist&gt; &lt;dbl&gt;
+##  1 Central  Kandy     arima  2020 W01   N(233, 988)  233.
+##  2 Central  Kandy     arima  2020 W02  N(227, 1439)  227.
+##  3 Central  Kandy     arima  2020 W03  N(231, 2597)  231.
+##  4 Central  Kandy     arima  2020 W04  N(241, 4313)  241.
+##  5 Central  Kandy     arima  2020 W05  N(255, 6242)  255.
+##  6 Central  Kandy     arima  2020 W06  N(266, 8266)  266.
+##  7 Central  Kandy     arima  2020 W07 N(271, 10138)  271.
+##  8 Central  Kandy     arima  2020 W08 N(272, 11787)  272.
+##  9 Central  Kandy     arima  2020 W09 N(269, 13244)  269.
+## 10 Central  Kandy     arima  2020 W10 N(265, 14574)  265.
+## # ... with 35,558 more rows
+```
+
+---
+## Reconciled forecasts
+
+
+
+```
+## # A fable: 52 x 6 [1W]
+## # Key:     Province, Districts, .model [1]
+##   Province Districts    .model       Week       Counts .mean
+##   &lt;chr*&gt;   &lt;chr*&gt;       &lt;chr&gt;      &lt;week&gt;       &lt;dist&gt; &lt;dbl&gt;
+*## 1 Central  &lt;aggregated&gt; bu_arima 2020 W01 N(378, 1154)  378.
+## 2 Central  &lt;aggregated&gt; bu_arima 2020 W02 N(365, 1707)  365.
+## 3 Central  &lt;aggregated&gt; bu_arima 2020 W03 N(367, 2995)  367.
+## 4 Central  &lt;aggregated&gt; bu_arima 2020 W04 N(376, 4880)  376.
+## # ... with 48 more rows
+```
+
+
+```
+## # A fable: 52 x 6 [1W]
+## # Key:     Province, Districts, .model [1]
+##   Province Districts   .model       Week    Counts .mean
+##   &lt;chr*&gt;   &lt;chr*&gt;      &lt;chr&gt;      &lt;week&gt;    &lt;dist&gt; &lt;dbl&gt;
+*## 1 Central  NuwaraEliya bu_arima 2020 W01 N(18, 20)  17.9
+## 2 Central  NuwaraEliya bu_arima 2020 W02 N(19, 27)  18.7
+## 3 Central  NuwaraEliya bu_arima 2020 W03 N(20, 36)  20.5
+## 4 Central  NuwaraEliya bu_arima 2020 W04 N(19, 49)  19.4
+## # ... with 48 more rows
+```
+
+---
+## Reconciled forecasts
+
+
+```
+## # A fable: 52 x 6 [1W]
+## # Key:     Province, Districts, .model [1]
+##   Province Districts .model       Week       Counts .mean
+##   &lt;chr*&gt;   &lt;chr*&gt;    &lt;chr&gt;      &lt;week&gt;       &lt;dist&gt; &lt;dbl&gt;
+*## 1 Central  Kandy     bu_arima 2020 W01  N(233, 988)  233.
+## 2 Central  Kandy     bu_arima 2020 W02 N(227, 1439)  227.
+## 3 Central  Kandy     bu_arima 2020 W03 N(231, 2597)  231.
+## 4 Central  Kandy     bu_arima 2020 W04 N(241, 4313)  241.
+## # ... with 48 more rows
+```
+
+
+```
+## # A fable: 52 x 6 [1W]
+## # Key:     Province, Districts, .model [1]
+##   Province Districts .model       Week      Counts .mean
+##   &lt;chr*&gt;   &lt;chr*&gt;    &lt;chr&gt;      &lt;week&gt;      &lt;dist&gt; &lt;dbl&gt;
+*## 1 Central  Matale    bu_arima 2020 W01 N(127, 146)  127.
+## 2 Central  Matale    bu_arima 2020 W02 N(119, 241)  119.
+## 3 Central  Matale    bu_arima 2020 W03 N(115, 362)  115.
+## 4 Central  Matale    bu_arima 2020 W04 N(115, 518)  115.
+## # ... with 48 more rows
+```
+
+
+---
+
+# Spatial hierarchical forecasting workflow
+
+&lt;img src="Figures/S6.JPG" width="47%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Accuracy calculation - MASE
+
+
+
+
+```r
+ac_TRAIN&lt;-accuracy(fc_TRAIN, HS_DataDengueTEST)
+ac_TRAIN_MASE&lt;-ac_TRAIN[,c(1,2,3,10)]
+ac_TRAIN_MASE
+```
+
+```
+## # A tibble: 684 x 4
+##    .model Province     Districts     MASE
+##    &lt;chr&gt;  &lt;chr*&gt;       &lt;chr*&gt;       &lt;dbl&gt;
+##  1 arima  Central      Kandy         2.85
+##  2 arima  Central      Matale        5.11
+##  3 arima  Central      NuwaraEliya   3.02
+##  4 arima  Central      &lt;aggregated&gt;  2.16
+##  5 arima  Eastern      Ampara        2.58
+##  6 arima  Eastern      Batticaloa    5.42
+##  7 arima  Eastern      Kalmune       4.03
+##  8 arima  Eastern      Trincomalee  12.6 
+##  9 arima  Eastern      &lt;aggregated&gt;  7.70
+## 10 arima  NorthCentral Anuradhapura  2.63
+## # ... with 674 more rows
+```
+
+---
+
+### MASE values for Training set: 2006-2019 and Test set: 2020 weekly data
+
+&lt;img src="Figures/HTS_Results.JPG" width="75%" height="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Spatial hierarchical forecasting
+
+&lt;img src="Figures/SETS.JPG" width="70%" height="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The best forecasting approaches in districts
+
+&lt;img src="Figures/MAP1.JPG" width="48%" height="17%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The best forecasting approaches in provinces
+
+&lt;img src="Figures/MAP2.JPG" width="48%" height="17%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The best approach for forecasts in 2020 
+
+&lt;img src="Figures/MAP3.JPG" width="42%" height="10%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualization of model performance-Weekly series
+
+&lt;img src="PPMOD_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
+
+
+---
+
+# Temporal hierarchical structure
+
+&lt;img src="Figures/F11.JPG" width="100%" height="5%" style="display: block; margin: auto;" /&gt;
+
+---
+# Compute all temporal aggregated time series
+
+.left-column[
+&lt;img src="Figures/thief.JPG" width="80%" height="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-column[
+
+
+
+```r
+Dengue_total_data&lt;- ts(Dengue_total_data, freq=52, start=c(2006,52))
+Dengue_train_data&lt;- window(Dengue_total_data , start = c(2006,52), end = c(2019,51), frequency = 52)
+*aggts_total = thief::tsaggregates(Dengue_total_data)
+*aggts_train = thief::tsaggregates(Dengue_train_data)
+summary(aggts_total)
+```
+
+```
+##           Length Class Mode   
+## Weekly    728    ts    numeric
+## 2-Weekly  364    ts    numeric
+## 4-Weekly  182    ts    numeric
+## Quarterly  56    ts    numeric
+## Biannual   28    ts    numeric
+## Annual     14    ts    numeric
+```
+]
+
+---
+# Compute base forecasts
+
+.left-column[
+&lt;img src="Figures/forecast.JPG" width="80%" height="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-column[
+
+```r
+base &lt;- list()
+for(i in seq_along(aggts_train))
+base[[i]] &lt;- forecast(forecast::auto.arima(aggts_train[[i]]),
+                          h=1*frequency(aggts_train[[i]]))
+base
+```
+
+```
+## [[1]]
+##          Point Forecast     Lo 80    Hi 80      Lo 95    Hi 95
+## 2019.981       3393.261 3026.0901 3760.432 2831.72153 3954.801
+## 2020.000       3071.209 2559.8313 3582.587 2289.12425 3853.294
+## 2020.019       2802.567 2117.5549 3487.578 1754.93161 3850.202
+## 2020.038       2642.612 1808.7919 3476.431 1367.39436 3917.829
+## 2020.058       2531.865 1557.5201 3506.209 1041.73326 4021.996
+## 2020.077       2421.112 1340.2592 3501.964  768.09055 4074.133
+## 2020.096       2326.788 1166.6810 3486.894  552.55759 4101.018
+## 2020.115       2252.602 1032.6859 3472.519  386.90113 4118.303
+## 2020.135       2180.368  914.5323 3446.205  244.43917 4116.298
+## 2020.154       2126.059  824.4218 3427.696  135.37674 4116.741
+## 2020.173       2079.034  749.1111 3408.956   45.09261 4112.975
+## 2020.192       2039.017  686.4818 3391.553  -29.50733 4107.542
+## 2020.212       1995.174  624.3630 3365.986 -101.30071 4091.649
+## 2020.231       1961.788  576.0534 3347.523 -157.51020 4081.086
+## 2020.250       1934.046  536.0034 3332.089 -204.07582 4072.169
+## 2020.269       1901.349  493.0536 3309.644 -252.45291 4055.151
+## 2020.288       1873.712  456.7926 3290.631 -293.27913 4040.703
+## 2020.308       1880.479  456.2342 3304.723 -297.71535 4058.673
+## 2020.327       1851.234  420.7058 3281.762 -336.56986 4039.037
+## 2020.346       1839.629  403.6592 3275.599 -356.49735 4035.755
+## 2020.365       1828.933  388.2040 3269.662 -374.47181 4032.338
+## 2020.385       1813.012  368.0822 3257.943 -396.81765 4022.842
+## 2020.404       1823.496  374.8224 3272.170 -392.05914 4039.051
+## 2020.423       1827.058  375.0187 3279.098 -393.64459 4047.761
+## 2020.442       1829.974  374.8821 3285.067 -395.39725 4055.346
+## 2020.462       1806.739  348.8554 3264.624 -422.90186 4036.381
+## 2020.481       1829.297  368.8394 3289.755 -404.28020 4062.875
+## 2020.500       1788.755  325.9072 3251.603 -448.47775 4025.988
+## 2020.519       1861.867  396.7833 3326.951 -378.78511 4102.519
+## 2020.538       1857.566  390.3776 3324.754 -386.30494 4101.437
+## 2020.558       1853.933  384.7513 3323.114 -392.98650 4100.852
+## 2020.577       1841.757  370.6765 3312.837 -408.06622 4091.580
+## 2020.596       1842.975  370.0778 3315.873 -409.62708 4095.578
+## 2020.615       1816.004  341.3581 3290.649 -439.27203 4071.279
+## 2020.635       1837.324  360.9900 3313.657 -420.53379 4095.181
+## 2020.654       1805.439  327.4691 3283.410 -454.92106 4065.800
+## 2020.673       1800.361  320.7982 3279.923 -462.43478 4063.156
+## 2020.692       1806.433  325.3172 3287.549 -458.73825 4071.605
+## 2020.712       1832.208  349.5715 3314.844 -435.28876 4099.704
+## 2020.731       1823.162  339.0349 3307.290 -446.61478 4092.940
+## 2020.750       1857.889  372.2956 3343.483 -414.13015 4129.908
+## 2020.769       1854.449  367.4119 3341.487 -419.77816 4128.677
+## 2020.788       1883.346  394.8835 3371.808 -393.06078 4159.752
+## 2020.808       1917.404  427.5344 3407.274 -361.15510 4195.964
+## 2020.827       1938.472  447.2087 3429.735 -342.21818 4219.161
+## 2020.846       1959.688  467.0455 3452.331 -323.11186 4242.489
+## 2020.865       1941.007  446.9957 3435.019 -343.88614 4225.900
+## 2020.885       2008.134  512.7638 3503.503 -278.83712 4295.104
+## 2020.904       2014.113  517.3939 3510.832 -274.92141 4303.148
+## 2020.923       1993.181  495.1201 3491.242 -297.90541 4284.267
+## 2020.942       1951.477  452.0817 3450.872 -341.65021 4244.604
+## 2020.962       1944.021  443.2977 3444.745 -351.13735 4239.180
+## 
+## [[2]]
+##          Point Forecast    Lo 80     Hi 80       Lo 95     Hi 95
+## 2019.981       6563.808 5732.969  7394.647  5293.14972  7834.467
+## 2020.019       5843.441 4349.462  7337.420  3558.59718  8128.285
+## 2020.058       5905.340 3846.864  7963.817  2757.17275  9053.508
+## 2020.096       6164.290 3749.991  8578.589  2471.93872  9856.641
+## 2020.135       6478.157 3838.566  9117.748  2441.25070 10515.064
+## 2020.173       6569.774 3771.598  9367.950  2290.33335 10849.215
+## 2020.212       6458.771 3516.636  9400.907  1959.16332 10958.379
+## 2020.250       6328.821 3234.892  9422.750  1597.06441 11060.577
+## 2020.288       6218.881 2961.325  9476.438  1236.87903 11200.884
+## 2020.327       6208.865 2785.067  9632.662   972.61877 11445.110
+## 2020.365       6239.939 2657.091  9822.787   760.44564 11719.433
+## 2020.404       6365.009 2634.730 10095.289   660.03879 12069.980
+## 2020.442       6380.108 2512.798 10247.418   465.56775 12294.648
+## 2020.481       6401.289 2403.874 10398.704   287.76976 12514.808
+## 2020.519       6491.502 2367.840 10615.163   184.90520 12798.098
+## 2020.558       6459.403 2211.882 10706.925   -36.61986 12955.427
+## 2020.596       6470.558 2101.475 10839.640  -211.37687 13152.492
+## 2020.635       6501.388 2013.559 10989.218  -362.15425 13364.931
+## 2020.673       6484.238 1880.879 11087.596  -555.99202 13524.467
+## 2020.712       6566.583 1850.922 11282.243  -645.39806 13778.563
+## 2020.750       6662.334 1837.292 11487.376  -716.93050 14041.599
+## 2020.788       6819.563 1887.662 11751.465  -723.12894 14362.256
+## 2020.827       6995.713 1959.154 12032.272  -707.03938 14698.466
+## 2020.865       7109.289 1970.090 12248.489  -750.43813 14969.017
+## 2020.904       7267.794 2027.886 12507.701  -745.95355 15281.541
+## 2020.942       7108.083 1769.350 12446.816 -1056.80494 15272.971
+## 
+## [[3]]
+##          Point Forecast     Lo 80    Hi 80       Lo 95    Hi 95
+## 2019.981      14769.232 11850.635 17687.83 10305.62233 19232.84
+## 2020.058      12446.899  7966.808 16926.99  5595.19095 19298.61
+## 2020.135      10765.647  5604.374 15926.92  2872.16129 18659.13
+## 2020.212       9612.245  4089.476 15135.01  1165.89908 18058.59
+## 2020.288       8830.682  3097.649 14563.72    62.76507 17598.60
+## 2020.365       8375.560  2511.342 14239.78  -592.98691 17344.11
+## 2020.442       8160.322  2208.817 14111.83  -941.71949 17262.36
+## 2020.519       8409.621  2396.316 14422.93  -786.93557 17606.18
+## 2020.596       8015.755  1956.022 14075.49 -1251.80651 17283.32
+## 2020.673       7818.961  1722.386 13915.54 -1504.94633 17142.87
+## 2020.750       8305.461  2178.199 14432.72 -1065.37736 17676.30
+## 2020.827       8983.198  2829.304 15137.09  -428.37043 18394.77
+## 2020.904       9034.573  2856.775 15212.37  -413.55298 18482.70
+## 
+## [[4]]
+##          Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+## 2019.981          45619 32365.05 58872.95 25348.826 65889.17
+## 2020.231          45619 26875.08 64362.92 16952.646 74285.35
+## 2020.481          45619 22662.48 68575.52 10510.029 80727.97
+## 2020.731          45619 19111.09 72126.91  5078.653 86159.35
+## 
+## [[5]]
+##          Point Forecast    Lo 80     Hi 80     Lo 95    Hi 95
+## 2019.981          68566 40870.86  96261.14 26209.932 110922.1
+## 2020.481          68566 29399.15 107732.85  8665.475 128466.5
+## 
+## [[6]]
+##          Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+## 2019.981          92467 20991.67 163942.3 -16845.08 201779.1
+```
+
+```r
+# forecast::ets, forecast::snaive, forecast::naive, forecast::meanf
+```
+
+]
+
+---
+
+# Reconcile forecasts
+
+
+```r
+reconciled &lt;- thief::reconcilethief(base,comb = c("bu"))
+# comb = c("bu","ols","struc","shr")
+reconciled
+```
+
+```
+## [[1]]
+##          Point Forecast     Lo 80    Hi 80      Lo 95    Hi 95
+## 2019.981       3393.261 3026.0901 3760.432 2831.72153 3954.801
+## 2020.000       3071.209 2559.8313 3582.587 2289.12425 3853.294
+## 2020.019       2802.567 2117.5549 3487.578 1754.93161 3850.202
+## 2020.038       2642.612 1808.7919 3476.431 1367.39436 3917.829
+## 2020.058       2531.865 1557.5201 3506.209 1041.73326 4021.996
+## 2020.077       2421.112 1340.2592 3501.964  768.09055 4074.133
+## 2020.096       2326.788 1166.6810 3486.894  552.55759 4101.018
+## 2020.115       2252.602 1032.6859 3472.519  386.90113 4118.303
+## 2020.135       2180.368  914.5323 3446.205  244.43917 4116.298
+## 2020.154       2126.059  824.4218 3427.696  135.37674 4116.741
+## 2020.173       2079.034  749.1111 3408.956   45.09261 4112.975
+## 2020.192       2039.017  686.4818 3391.553  -29.50733 4107.542
+## 2020.212       1995.174  624.3630 3365.986 -101.30071 4091.649
+## 2020.231       1961.788  576.0534 3347.523 -157.51020 4081.086
+## 2020.250       1934.046  536.0034 3332.089 -204.07582 4072.169
+## 2020.269       1901.349  493.0536 3309.644 -252.45291 4055.151
+## 2020.288       1873.712  456.7926 3290.631 -293.27913 4040.703
+## 2020.308       1880.479  456.2342 3304.723 -297.71535 4058.673
+## 2020.327       1851.234  420.7058 3281.762 -336.56986 4039.037
+## 2020.346       1839.629  403.6592 3275.599 -356.49735 4035.755
+## 2020.365       1828.933  388.2040 3269.662 -374.47181 4032.338
+## 2020.385       1813.012  368.0822 3257.943 -396.81765 4022.842
+## 2020.404       1823.496  374.8224 3272.170 -392.05914 4039.051
+## 2020.423       1827.058  375.0187 3279.098 -393.64459 4047.761
+## 2020.442       1829.974  374.8821 3285.067 -395.39725 4055.346
+## 2020.462       1806.739  348.8554 3264.624 -422.90186 4036.381
+## 2020.481       1829.297  368.8394 3289.755 -404.28020 4062.875
+## 2020.500       1788.755  325.9072 3251.603 -448.47775 4025.988
+## 2020.519       1861.867  396.7833 3326.951 -378.78511 4102.519
+## 2020.538       1857.566  390.3776 3324.754 -386.30494 4101.437
+## 2020.558       1853.933  384.7513 3323.114 -392.98650 4100.852
+## 2020.577       1841.757  370.6765 3312.837 -408.06622 4091.580
+## 2020.596       1842.975  370.0778 3315.873 -409.62708 4095.578
+## 2020.615       1816.004  341.3581 3290.649 -439.27203 4071.279
+## 2020.635       1837.324  360.9900 3313.657 -420.53379 4095.181
+## 2020.654       1805.439  327.4691 3283.410 -454.92106 4065.800
+## 2020.673       1800.361  320.7982 3279.923 -462.43478 4063.156
+## 2020.692       1806.433  325.3172 3287.549 -458.73825 4071.605
+## 2020.712       1832.208  349.5715 3314.844 -435.28876 4099.704
+## 2020.731       1823.162  339.0349 3307.290 -446.61478 4092.940
+## 2020.750       1857.889  372.2956 3343.483 -414.13015 4129.908
+## 2020.769       1854.449  367.4119 3341.487 -419.77816 4128.677
+## 2020.788       1883.346  394.8835 3371.808 -393.06078 4159.752
+## 2020.808       1917.404  427.5344 3407.274 -361.15510 4195.964
+## 2020.827       1938.472  447.2087 3429.735 -342.21818 4219.161
+## 2020.846       1959.688  467.0455 3452.331 -323.11186 4242.489
+## 2020.865       1941.007  446.9957 3435.019 -343.88614 4225.900
+## 2020.885       2008.134  512.7638 3503.503 -278.83712 4295.104
+## 2020.904       2014.113  517.3939 3510.832 -274.92141 4303.148
+## 2020.923       1993.181  495.1201 3491.242 -297.90541 4284.267
+## 2020.942       1951.477  452.0817 3450.872 -341.65021 4244.604
+## 2020.962       1944.021  443.2977 3444.745 -351.13735 4239.180
+## 
+## [[2]]
+##          Point Forecast       Lo 80    Hi 80      Lo 95     Hi 95
+## 2019.981       6464.470  5633.63109 7295.309  5193.8115  7735.129
+## 2020.019       5445.178  3951.19940 6939.157  3160.3347  7730.022
+## 2020.058       4952.976  2894.49989 7011.452  1804.8084  8101.144
+## 2020.096       4579.390  2165.09134 6993.689   887.0388  8271.741
+## 2020.135       4306.427  1666.83610 6946.019   269.5209  8343.334
+## 2020.173       4118.051  1319.87520 6916.227  -161.3897  8397.492
+## 2020.212       3956.962  1014.82676 6899.098  -542.6457  8456.570
+## 2020.250       3835.395   741.46624 6929.325  -896.3609  8567.152
+## 2020.288       3754.191   496.63435 7011.747 -1227.8118  8736.193
+## 2020.327       3690.863   267.06561 7114.660 -1545.3831  8927.109
+## 2020.365       3641.945    59.09702 7224.793 -1837.5482  9121.439
+## 2020.404       3650.554   -79.72537 7380.834 -2054.4162  9355.525
+## 2020.442       3636.714  -230.59622 7504.024 -2277.8265  9551.254
+## 2020.481       3618.052  -379.36287 7615.468 -2495.4667  9731.572
+## 2020.519       3719.433  -404.22900 7843.094 -2587.1637 10026.029
+## 2020.558       3695.690  -551.83185 7943.211 -2800.3338 10191.713
+## 2020.596       3658.979  -710.10315 8028.061 -3022.9555 10340.913
+## 2020.635       3642.763  -845.06638 8130.592 -3220.7797 10506.306
+## 2020.673       3606.794  -996.56473 8210.153 -3433.4356 10647.023
+## 2020.712       3655.370 -1060.29040 8371.031 -3556.6104 10867.351
+## 2020.750       3712.339 -1112.70325 8537.380 -3666.9261 11091.603
+## 2020.788       3800.750 -1131.15145 8732.651 -3741.9423 11343.442
+## 2020.827       3898.160 -1138.39915 8934.719 -3804.5925 11600.913
+## 2020.865       3949.141 -1190.05889 9088.340 -3910.5868 11808.868
+## 2020.904       4007.294 -1232.61353 9247.202 -4006.4530 12021.041
+## 2020.942       3895.498 -1443.23519 9234.231 -4269.3899 12060.386
+## 
+## [[3]]
+##          Point Forecast    Lo 80    Hi 80      Lo 95    Hi 95
+## 2019.981      11909.648 8991.051 14828.25  7446.0386 16373.26
+## 2020.058       9532.366 5052.275 14012.46  2680.6581 16384.07
+## 2020.135       8424.479 3263.206 13585.75   530.9932 16317.96
+## 2020.212       7792.358 2269.589 13315.13  -653.9884 16238.70
+## 2020.288       7445.053 1712.020 13178.09 -1322.8641 16212.97
+## 2020.365       7292.500 1428.282 13156.72 -1676.0473 16261.05
+## 2020.442       7254.766 1303.261 13206.27 -1847.2755 16356.81
+## 2020.519       7415.122 1401.817 13428.43 -1781.4342 16611.68
+## 2020.596       7301.742 1242.009 13361.47 -1965.8201 16569.30
+## 2020.673       7262.164 1165.589 13358.74 -2061.7431 16586.07
+## 2020.750       7513.088 1385.827 13640.35 -1857.7498 16883.93
+## 2020.827       7847.301 1693.407 14001.19 -1564.2677 17258.87
+## 2020.904       7902.792 1724.995 14080.59 -1545.3334 17350.92
+## 
+## [[4]]
+##          Point Forecast      Lo 80    Hi 80      Lo 95    Hi 95
+## 2019.981       31861.67 18607.7131 45115.62  11591.494 52131.84
+## 2020.231       24171.45  5427.5284 42915.37  -4494.904 52837.80
+## 2020.481       23773.92   817.3963 46730.44 -11335.052 58882.89
+## 2020.731       25086.34 -1421.5645 51594.25 -15454.003 65626.69
+## 
+## [[5]]
+##          Point Forecast     Lo 80    Hi 80     Lo 95     Hi 95
+## 2019.981       56033.12 28337.973 83728.26  13677.05  98389.19
+## 2020.481       48860.26  9693.414 88027.11 -11040.26 108760.79
+## 
+## [[6]]
+##          Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+## 2019.981       104893.4 33418.05 176368.7 -4418.704 214205.5
+```
+
+---
+
+# Accuracy checking 
+
+#### Weekly series accuracy 
+
+
+```r
+accuracy(reconciled[[1]],aggts_total[[1]])[,"MASE"]
+```
+
+```
+## Training set     Test set 
+##    0.1933212    1.9210964
+```
+
+#### Bi-weekly series accuracy 
+
+
+```r
+accuracy(reconciled[[2]],aggts_total[[2]])[,"MASE"]
+```
+
+```
+## Training set     Test set 
+##    0.2332001    1.9270839
+```
+
+#### Monthly series accuracy 
+
+
+```r
+accuracy(reconciled[[3]],aggts_total[[3]])[,"MASE"]
+```
+
+```
+## Training set     Test set 
+##    0.3341911    1.9480790
+```
+
+---
+
+#  The best forecasting approaches for temporal granualities
+
+&lt;img src="Figures/TEMAGGRESULTS.JPG" width="100%" height="50%" style="display: block; margin: auto;" /&gt;
+
+---
+class: center, middle
+
+# Thank you!
+
+Slides created via the R packages:
+
+[**xaringan**](https://github.com/yihui/xaringan)&lt;br&gt;
+[gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "solarized-light",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
