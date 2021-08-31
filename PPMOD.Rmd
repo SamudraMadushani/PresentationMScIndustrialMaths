@@ -339,7 +339,7 @@ plotly::ggplotly(HMT2)
 
 # Feature-based visualization
 
-```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '60%', out.height = '10%',fig.height=7, fig.width=14}
+```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '70%', out.height = '5%',fig.height=7, fig.width=14}
 knitr::include_graphics("Figures/FES1.JPG")
 ```
 
@@ -441,7 +441,6 @@ data.frame(pr$rotation)
 ```{r ,echo=FALSE}
 pcs<-Dengue_features%>% dplyr::select(-c(1,2,31,33,35,37)) %>% prcomp(scale = TRUE) %>%
   augment(Dengue_features)
-pcs
 ```
 
 
