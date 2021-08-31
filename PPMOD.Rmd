@@ -435,7 +435,7 @@ knitr::include_graphics("Figures/FES2.JPG")
 
 $$Z=\frac{value-mean}{s.d.}$$
 
---
+---
 
 #### Covariance matrix computation
 
