@@ -419,7 +419,7 @@ Dengue_features
 
 # Feature-based visualization
 
-```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '60%', out.height = '20%',fig.height=7, fig.width=14}
+```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/FES2.JPG")
 ```
 
