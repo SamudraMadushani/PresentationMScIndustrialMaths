@@ -339,9 +339,8 @@ plotly::ggplotly(HMT2)
 
 # Feature-based visualization
 
-```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '50%', out.height = '5%',fig.height=7, fig.width=14}
-![](Figures/FES1.JPG)
-#knitr::include_graphics("Figures/FES1.JPG")
+```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '50%', out.height = '10%',fig.height=7, fig.width=14}
+knitr::include_graphics("Figures/FES1.JPG")
 ```
 
 ---
