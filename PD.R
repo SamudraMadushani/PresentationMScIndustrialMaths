@@ -1,4 +1,6 @@
 library(tsfeatures)
+library(viridisLite)
+library(viridis)
 
 load("H:/ProgressPresentation/ProgressPresentation/data/FinalData.Rda")
 D<-Data_Counts
@@ -10,10 +12,123 @@ HM_data_districts<-HM_data_districts%>% as_tsibble(key = Districts,index=Week)
 
 HM2<-ggplot(HM_data_districts, aes(x=Week, y=Districts)) +
   geom_tile(aes(fill = Counts)) +
-  scale_fill_viridis_c(option = "D", direction = -1,breaks = c(500,1500, 2500)) +
-  labs(title = " ",y = "Districts") +
-  theme_light()+ theme(legend.position = 'right')
+  scale_fill_viridis(option="magma",breaks = c(500,1500, 2500)) +
+  labs(title = "Global visualization",y = "Districts") +
+  theme_light()+ theme(legend.position = 'right')+
+   scale_y_discrete(limits=c("Colombo","Gampaha","Kandy","Ratnapura","Kegalle","Kalutara","Batticaloa","Matara","Jaffna","Galle","Puttalam","Matale","Hambanthota","Anuradhapura","Badulla","Vavuniya","Ampara","Monaragala","Trincomalee","Polonnaruwa","NuwaraEliya","Mannar","Mullaitivu","Kilinochchi"))
 
+#NewHTDATA<-HM_data_districts%>%dplyr::filter(lubridate::year(Week)<2019)
+#NewHTDATA<-NewHTDATA%>%dplyr::filter(lubridate::year(Week)>2017)
+
+
+################################################################
+Week<-tsibble::yearweek(D$EndDate)
+Date<-D$EndDate
+Province<-rep(c(rep("Western",3),rep("Central",3),rep("Southern",3),rep("Nothern",5),
+                rep("Eastern",3),rep("NorthWestern",2),rep("NorthCentral",2),
+                rep("Uva",2),rep("Sabaragamuwa",2),rep("Eastern",1)),730)
+Districts<-D$Division
+Counts<-as.integer(D$Dengue)
+DengueTEST<-tibble(Week,Date,Counts,Districts,Province)
+DataDengueTEST<- DengueTEST%>% 
+  as_tsibble(key=c(Province,Districts),index=Week)
+
+DIS_DataDengueTEST<-DataDengueTEST %>%fabletools::aggregate_key(Province/Districts,Counts=sum(Counts)) #ARRANGE TEST SET
+DIS_DataDengueTEST
+
+Dengue_Districts<-DIS_DataDengueTEST %>%
+  dplyr::filter(!is_aggregated(Districts)& !is_aggregated(Province))
+
+Ampara<-Dengue_Districts%>% dplyr::filter(Districts=="Ampara")
+Anuradhapura<-Dengue_Districts%>% dplyr::filter(Districts=="Anuradhapura")
+Badulla<-Dengue_Districts%>% dplyr::filter(Districts=="Badulla")
+Batticaloa<-Dengue_Districts%>% dplyr::filter(Districts=="Batticaloa")
+Colombo<-Dengue_Districts%>% dplyr::filter(Districts=="Colombo")
+Galle <-Dengue_Districts%>% dplyr::filter(Districts=="Galle")
+Gampaha<-Dengue_Districts%>% dplyr::filter(Districts=="Gampaha")
+Hambanthota<-Dengue_Districts%>% dplyr::filter(Districts=="Hambanthota")
+Jaffna<-Dengue_Districts%>% dplyr::filter(Districts=="Jaffna")
+Kalmune<-Dengue_Districts%>% dplyr::filter(Districts=="Kalmune")
+Kalutara<-Dengue_Districts%>% dplyr::filter(Districts=="Kalutara")
+Kandy<-Dengue_Districts%>% dplyr::filter(Districts=="Kandy")
+Kegalle<-Dengue_Districts%>% dplyr::filter(Districts=="Kegalle")
+Kilinochchi<-Dengue_Districts%>% dplyr::filter(Districts=="Kilinochchi")
+Kurunagala<-Dengue_Districts%>% dplyr::filter(Districts=="Kurunagala")
+Mannar<-Dengue_Districts%>% dplyr::filter(Districts=="Mannar")
+Matale<-Dengue_Districts%>% dplyr::filter(Districts=="Matale")
+Matara<-Dengue_Districts%>% dplyr::filter(Districts=="Matara")
+Monaragala<-Dengue_Districts%>% dplyr::filter(Districts=="Monaragala")
+Mullaitivu<-Dengue_Districts%>% dplyr::filter(Districts=="Mullaitivu")
+NuwaraEliya<-Dengue_Districts%>% dplyr::filter(Districts=="NuwaraEliya")
+Polonnaruwa<-Dengue_Districts%>% dplyr::filter(Districts=="Polonnaruwa")
+Puttalam<-Dengue_Districts%>% dplyr::filter(Districts=="Puttalam")
+Ratnapura<-Dengue_Districts%>% dplyr::filter(Districts=="Ratnapura")
+Trincomalee<-Dengue_Districts%>% dplyr::filter(Districts=="Trincomalee")
+Vavuniya<-Dengue_Districts%>% dplyr::filter(Districts=="Vavuniya")
+Dis_Data<-data.frame(Ampara$Week,Ampara$Counts,Anuradhapura$Counts,Badulla$Counts,
+                     Batticaloa$Counts,Colombo$Counts,Galle$Counts,Gampaha$Counts,
+                     Hambanthota$Counts,Jaffna$Counts,Kalmune$Counts,Kalutara$Counts,
+                     Kandy$Counts,Kegalle$Counts,Kilinochchi$Counts,Kurunagala$Counts,
+                     Mannar$Counts,Matale$Counts,Matara$Counts,Monaragala$Counts,
+                     Mullaitivu$Counts,NuwaraEliya$Counts,Polonnaruwa$Counts,
+                     Puttalam$Counts,Ratnapura$Counts,Trincomalee$Counts,Vavuniya$Counts)
+Dis_Data_Original<-Dis_Data
+Dis_Data
+Min_Max_Transformation<-function(Dis_Data)
+{
+  for (i in 2:27){
+    rng<-range(Dis_Data[,i],na.rm=TRUE)
+    Dis_Data[,i]<-(Dis_Data[,i]-rng[1])/(rng[2]-rng[1])  
+  }
+  return(Dis_Data);
+} 
+Transformed_Dis_Data<-Min_Max_Transformation(Dis_Data)  
+Week<-rep(Transformed_Dis_Data[,1],26)
+Counts<-c(Transformed_Dis_Data[,2],Transformed_Dis_Data[,3],
+          Transformed_Dis_Data[,4],Transformed_Dis_Data[,5],
+          Transformed_Dis_Data[,6],Transformed_Dis_Data[,7],
+          Transformed_Dis_Data[,8],Transformed_Dis_Data[,9],
+          Transformed_Dis_Data[,10],Transformed_Dis_Data[,11],
+          Transformed_Dis_Data[,12],Transformed_Dis_Data[,13],
+          Transformed_Dis_Data[,14],Transformed_Dis_Data[,15],
+          Transformed_Dis_Data[,16],Transformed_Dis_Data[,17],
+          Transformed_Dis_Data[,18],Transformed_Dis_Data[,19],
+          Transformed_Dis_Data[,20],Transformed_Dis_Data[,21],
+          Transformed_Dis_Data[,22],Transformed_Dis_Data[,23],
+          Transformed_Dis_Data[,24],Transformed_Dis_Data[,25],
+          Transformed_Dis_Data[,26],Transformed_Dis_Data[,27])
+Districts<-c(rep("Ampara",730),rep("Anuradhapura",730),rep("Badulla",730),rep("Batticaloa",730),
+             rep("Colombo",730),rep("Galle",730),rep("Gampaha",730),rep("Hambanthota",730),
+             rep("Jaffna",730),rep("Kalmune",730),rep("Kalutara",730),rep("Kandy",730),
+             rep("Kegalle",730),rep("Kilinochchi",730),rep("Kurunagala",730),rep("Mannar",730),
+             rep("Matale",730),rep("Matara",730),rep("Monaragala",730),rep("Mullaitivu",730),
+             rep("NuwaraEliya",730),rep("Polonnaruwa",730),rep("Puttalam",730),rep("Ratnapura",730),
+             rep("Trincomalee",730),rep("Vavuniya",730))
+
+Province<-c(rep("Eastern",730),rep("North Central",730),rep("Uva",730),rep("Eastern",730),
+            rep("Western",730),rep("Southern",730),rep("Western",730),rep("Southern",730),
+            rep("Nothern",730),rep("Eastern",730),rep("Western",730),rep("Central",730),
+            rep("Sabaragamuwa",730),rep("Nothern",730),rep("North Western",730),rep("Nothern",730),
+            rep("Central",730),rep("Southern",730),rep("Uva",730),rep("Nothern",730),
+            rep("Central",730),rep("North Central",730),rep("North Western",730),rep("Sabaragamuwa",730),
+            rep("Eastern",730),rep("Nothern",730))
+
+Trans_Dengue<-data.frame(Week,Counts,Districts,Province)
+Trans_Dengue
+Trans_DengueTRAIN<-Trans_Dengue%>% 
+  as_tsibble(key=c(Province,Districts),index=Week)
+
+Trans_DengueMOD<-data.frame(Week,Counts,Districts)
+Trans_DengueMOD
+Trans_DengueTRAINMOD<-Trans_DengueMOD%>% 
+  as_tsibble(key=c(Districts),index=Week)
+
+HMT2<-ggplot(Trans_DengueTRAINMOD, aes(x=Week, y=Districts)) +
+  geom_tile(aes(fill = Counts)) +
+  scale_fill_viridis(option="magma") +
+  labs(title = "Local visualization",y = "Districts") +
+  theme_light()+ theme(legend.position = 'right')+
+  scale_y_discrete(limits=c("Colombo","Gampaha","Kandy","Ratnapura","Kegalle","Kalutara","Batticaloa","Matara","Jaffna","Galle","Puttalam","Matale","Hambanthota","Anuradhapura","Badulla","Vavuniya","Ampara","Monaragala","Trincomalee","Polonnaruwa","NuwaraEliya","Mannar","Mullaitivu","Kilinochchi"))
 
 ##########################################################################
 

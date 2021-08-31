@@ -73,11 +73,21 @@ knitr::include_graphics("Figures/F1.JPG")
 
 ---
 
-class: inverse center middle
+# Objectives
 
-# Data
+* Dengue incidence forecasting for districts, provinces, and whole country.
+
+--
+
+* Data visualization
+
+--
+
+* Automate the process of reading PDF files.
 
 ---
+
+# Data
 
 * Epidemiological unit, Ministry of Health, Sri Lanka.
 
@@ -87,6 +97,41 @@ class: inverse center middle
 
 ```{r figurechapter03, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '40%',fig.height=5, fig.width=10}
 knitr::include_graphics("Figures/F3.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '40%',fig.height=7, fig.width=10}
+knitr::include_graphics("Figures/PDFF.JPG")
+```
+
+---
+
+# PDF data extraction
+
+.pull-left[
+### Methods
+
+* Copy and paste
+
+* Manual data entry
+
+* PDF table extraction tools
+]
+
+.pull-right[
+### Challenges
+
+* Cause errors
+
+* Requires considerable amount of time and effort
+
+* Doesn't maintain the original format
+
+]
+
+```{r , echo=FALSE, fig.align = 'center',message=FALSE}
+knitr::include_graphics("Figures/AUTO.JPG")
 ```
 
 ---
@@ -164,6 +209,14 @@ D
 
 ---
 
+class: inverse center middle
+
+```{r , echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '100%',fig.height=5, fig.width=10,comment=NA}
+knitr::include_graphics("Figures/DEM.JPG")
+```
+
+---
+
 # DISC (DISease Counts) Package
 
 
@@ -178,7 +231,7 @@ knitr::include_graphics("Figures/F8M.JPG")
 
 ---
 
-# Dengue counts data
+class: inverse center middle
 
 ```{r ,echo=FALSE}
 Week<-tsibble::yearweek(D$EndDate)
@@ -191,24 +244,14 @@ Counts<-as.integer(D$Dengue)
 
 ```
 
-.left-column[
-```{r figurechapter010t, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '80%', out.height = '80%',fig.height=4, fig.width=4}
-knitr::include_graphics("Figures/tsibble.JPG")
-```
-]
 
-.right-column[
-```{r ,highlight.output=c(1, 2)}
+```{r ,echo=FALSE}
 DengueTEST<-tibble(Week,Date,Counts,Districts,Province)
 DataDengueTEST<- DengueTEST%>% 
   as_tsibble(key=c(Province,Districts),index=Week)#<<
-DataDengueTEST
+
 ```
-]
 
----
-
-class: inverse center middle
 
 ```{r figurechapter09, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '100%',fig.height=5, fig.width=10}
 knitr::include_graphics("Figures/F9.JPG")
@@ -219,6 +262,16 @@ knitr::include_graphics("Figures/F9.JPG")
 class: inverse center middle
 
 # Data Visualization
+
+---
+
+# Objectives of Data Visualization
+
+* Identify the patterns associated with time series
+
+* Dengue outbreak identification
+
+* Prominent features identification
 
 ---
 
@@ -238,42 +291,107 @@ class: inverse center middle
 ```
 
 
-```{r figurechapter09A, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '90%', out.height = '80%',fig.height=7, fig.width=14}
+```{r figurechapter09A, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '90%', out.height = '100%',fig.height=8, fig.width=14}
 knitr::include_graphics("Figures/DP.JPG")
 ```
 
 ---
 # Time domain visualization-Districts
 
-```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=7, fig.width=14}
-HM2
+```{r ,echo=FALSE, out.width = '90%', out.height = '40%',fig.height=5, fig.width=10, fig.align = 'center'}
+Dengue_Districts <- DataDengueTEST%>%
+  dplyr::group_by(Districts) %>%
+  dplyr::summarise(Counts = sum(Counts))
+
+cp<-Dengue_Districts%>%autoplot(Counts)+labs(y = "Counts",x="Week")
+cp<-cp+theme(legend.position="bottom")
+cp
+```
+
+---
+
+# Time domain visualization-Districts
+
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=14}
+plotly::ggplotly(HM2)
+```
+
+---
+
+# Min-Max Transformation
+
+$$\frac{x_{i}-min(x)}{max(x)-min(x)}$$
+where $x=(x_{1},x_{2},\dots,x_{n})$.
+
+* Rescaling dengue counts of all districts onto 0-1 range.
+
+---
+
+# Time domain visualization-Districts
+
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=14}
+plotly::ggplotly(HMT2)
 ```
 
 ---
 
 # Feature-based visualization
 
-```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '40%',fig.height=5, fig.width=10}
-knitr::include_graphics("Figures/FB1.JPG")
+```{r figurechapter09FB, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '60%', out.height = '10%',fig.height=7, fig.width=14}
+knitr::include_graphics("Figures/FES1.JPG")
 ```
 
 ---
 
 # Time series features
 
-.left-column[
-```{r figurechapter010, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '80%', out.height = '80%',fig.height=4, fig.width=4}
-knitr::include_graphics("Figures/feasts.JPG")
-```
-]
+* Feature of a time series is the numerical summary calculated from a time series.
 
-.right-column[
-```{r}
-Dengue_features<-DataDengueTEST %>% 
-                 features(Counts, feature_set(pkgs = "feasts"))
-colnames(Dengue_features[,-c(1:2)])
+### Seasonal and Trend (STL) Decomposition
+
+```{r , echo=FALSE, fig.align = 'center',message=FALSE, out.width = '70%', out.height = '70%',fig.height=5, fig.width=10}
+knitr::include_graphics("Figures/STL.JPG")
 ```
-]
+
+---
+
+# Time series features
+
+#### Strength of seasonality
+
+$$F_{s}=max\biggl(0,1-\frac{Var(R_{t})}{Var(S_{t}+R_{t})}\biggr)$$
+--
+
+#### Strength of trend
+
+$$F_{s}=max\biggl(0,1-\frac{Var(R_{t})}{Var(T_{t}+R_{t})}\biggr)$$
+--
+
+#### Spectral entropy
+
+* A measure of forecastability of a time series.
+
+$$H_{s}=-\int_{-\pi}^{\pi}\hat{f}_{y}(\lambda)log\hat{f}_{y}(\lambda).d\lambda$$
+where $\hat{f}_{y}$ is an estimate of the spectral density of the data.
+
+* Low value of $H_{s}$ implies that time series is easier to forecast.
+
+---
+
+# Time series features
+
+#### Autocorrelation function: ACF
+
+* Autocorrelation measures the strength of linear relationship between lagged value of a time series.
+
+$$r_{k}=\frac{\sum_{t=k+1}^{T}(y_{t}-\bar{y})(y_{t-k}-\bar{y})}{\sum_{t=1}^{T}(y_{t}-\bar{y})^{2}}$$
+$r_{k}$ measures the linear relationship between $y_{t}$ and $y_{t-k}$.
+
+#### Number of crossing points
+
+* computes the number of times a time series crosses the median.
 
 ---
 
@@ -292,7 +410,7 @@ SHS_DataDengueTEST<-DataDengueTEST%>%fabletools::aggregate_key(Province/District
 ```
 
 
-```{r}
+```{r ,echo=FALSE,comment=NA}
 Dengue_features<-SHS_DataDengueTEST %>% features(Counts, feature_set(pkgs = "feasts"))
 Dengue_features
 ```
@@ -301,18 +419,14 @@ Dengue_features
 
 # Feature-based visualization
 
-```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '60%', out.height = '20%',fig.height=5, fig.width=10}
-knitr::include_graphics("Figures/FB3.JPG")
+```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '60%', out.height = '20%',fig.height=7, fig.width=14}
+knitr::include_graphics("Figures/FES2.JPG")
 ```
 
 ---
 
-# Excluded features from PCA
+# Principal Component Analysis
 
-```{r ,echo=FALSE}
-Dengue_features %>%
-  dplyr::select(c(1,2,31,33,35,37))
-```
 
 ---
 
@@ -320,9 +434,11 @@ Dengue_features %>%
 
 ```{r ,echo=FALSE}
 library(broom)
+pr<-prcomp(Dengue_features[,-c(1,2,31,33,35,37)],scale=TRUE)
+data.frame(pr$rotation)
 ```
 
-```{r}
+```{r ,echo=FALSE}
 pcs<-Dengue_features%>% dplyr::select(-c(1,2,31,33,35,37)) %>% prcomp(scale = TRUE) %>%
   augment(Dengue_features)
 pcs
@@ -487,7 +603,7 @@ pr<-prcomp(Temporal_DengueFeatures[,-c(1,10,11,12,20)],scale=TRUE)
 ```
 
 ```{r ,echo=FALSE}
-pr$rotation
+data.frame(pr$rotation)
 ```
 
 ---
