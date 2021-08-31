@@ -427,6 +427,39 @@ knitr::include_graphics("Figures/FES2.JPG")
 
 # Principal Component Analysis
 
+* Principal components are new variables that are constructed as linear combinations of the initial variables.
+
+--
+
+#### Standardization
+
+$$Z=\frac{value-mean}{s.d.}$$
+
+--
+
+#### Covariance matrix computation
+
+* For a 3 dimensional data set $x, y, z$,
+
+$$
+\left[\begin{array}{ccc} 
+Var(x) & Cov(x,y) & Cov(x, z)\\
+Cov(y,x) & Var(y) & Cov(y, z)\\
+Cov(z,x) & Cov(z,y) & Var(z)
+\end{array}\right]
+$$ 
+
+--
+
+* Compute Eigenvalues and Eigenvectors of covariance matrix
+
+  * Rank the Eigenvalues in in descending order $\lambda_{1}>\lambda_{2}>\lambda_{3}$
+  
+  * Eigenvector that corresponds to the PC1 is $v_{1}$
+
+--
+
+* Obtain Principal components 
 
 ---
 
