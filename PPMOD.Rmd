@@ -313,7 +313,7 @@ cp
 # Time domain visualization-Districts
 
 
-```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=14}
+```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=16}
 plotly::ggplotly(HM2)
 ```
 
@@ -331,7 +331,7 @@ where $x=(x_{1},x_{2},\dots,x_{n})$.
 # Time domain visualization-Districts
 
 
-```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=14}
+```{r ,echo=FALSE, out.width = '100%', out.height = '80%',fig.height=7, fig.width=16}
 plotly::ggplotly(HMT2)
 ```
 
@@ -624,9 +624,6 @@ Temporal_DengueFeatures
 
 # Excluded features from PCA
 
-```{r}
-Temporal_DengueFeatures[,c(1,10,11,12,20)]
-```
 
 ---
 
