@@ -451,7 +451,7 @@ $$
 
 --
 
-* Compute Eigenvalues and Eigenvectors of covariance matrix
+#### Compute Eigenvalues and Eigenvectors of covariance matrix
 
   * Rank the Eigenvalues in in descending order $\lambda_{1}>\lambda_{2}>\lambda_{3}$
   
@@ -459,7 +459,7 @@ $$
 
 --
 
-* Obtain Principal components 
+#### Obtain Principal components 
 
 ---
 
