@@ -20,7 +20,7 @@ HM2<-ggplot(HM_data_districts, aes(x=Week, y=Districts)) +
 #NewHTDATA<-HM_data_districts%>%dplyr::filter(lubridate::year(Week)<2019)
 #NewHTDATA<-NewHTDATA%>%dplyr::filter(lubridate::year(Week)>2017)
 
-
+pr<-prcomp(Temporal_DengueFeatures[,-c(1,10,11,12,20)],scale=TRUE)
 ################################################################
 Week<-tsibble::yearweek(D$EndDate)
 Date<-D$EndDate
