@@ -419,7 +419,7 @@ Dengue_features
 
 # Feature-based visualization
 
-```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '20%', out.height = '5%',fig.height=9, fig.width=16}
+```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '80%', out.height = '50%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/FES2.JPG")
 ```
 
@@ -435,7 +435,7 @@ knitr::include_graphics("Figures/FES2.JPG")
 
 $$Z=\frac{value-mean}{s.d.}$$
 
----
+--
 
 #### Covariance matrix computation
 
@@ -468,7 +468,7 @@ $$
 ```{r ,echo=FALSE}
 library(broom)
 pr<-prcomp(Dengue_features[,-c(1,2,31,33,35,37)],scale=TRUE)
-data.frame(pr$rotation)
+as.data.frame(pr$rotation)
 ```
 
 ```{r ,echo=FALSE}
