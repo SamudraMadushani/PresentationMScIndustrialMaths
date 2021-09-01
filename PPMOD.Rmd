@@ -44,24 +44,19 @@ class: inverse center middle
 
 # Introduction
 
-.pull-left[
-```{r ,echo=FALSE,fig.height=7}
-library(ggplot2)
-Year<-c(2010:2020)
-Dengue<-c(25559,21079,23792,22213,34775,23010,32695,174025,51938,92467,35397)
-df<-data.frame(Year,Dengue)
-S1<-ggplot(df, aes(x=as.factor(Year), y=Dengue, fill=Dengue)) + 
-  geom_bar(stat = "identity", color="#b2182b", fill="#b2182b")+ theme(legend.position = 'none')+
-  labs(x="Year", y = "Dengue counts")
-S1
+
+```{r ,echo=FALSE,fig.height=7,fig.width=16,out.width='100%',out.height='100%'}
+#library(ggplot2)
+#Year<-c(2010:2020)
+#Dengue<-c(25559,21079,23792,22213,34775,23010,32695,174025,51938,92467,35397)
+#df<-data.frame(Year,Dengue)
+#S1<-ggplot(df, aes(x=as.factor(Year), y=Dengue, fill=Dengue)) + 
+#  geom_bar(stat = "identity", color="#b2182b", fill="#b2182b")+ theme(legend.position = #'none')+
+#  labs(x="Year", y = "Dengue counts")
+#S1
+knitr::include_graphics("Figures/INT.JPG")
 ```
 
-]
-.pull-right[
-```{r figurechapter002, echo=FALSE, fig.align = 'center',message=FALSE,fig.height=7}
-knitr::include_graphics("Figures/I1.JPG")
-```
-]
 
 ---
 
