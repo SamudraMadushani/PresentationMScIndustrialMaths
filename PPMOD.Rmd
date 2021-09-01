@@ -414,7 +414,7 @@ Dengue_features
 
 # Feature-based visualization
 
-```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '80%', out.height = '50%',fig.height=9, fig.width=16}
+```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '75%', out.height = '40%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/FES2.JPG")
 ```
 
@@ -435,6 +435,15 @@ $$Z=\frac{value-mean}{s.d.}$$
 #### Covariance matrix computation
 
 * For a 3 dimensional data set $x, y, z$,
+
+$$
+\begin{pmatrix}
+Var(x) & Cov(x,y) & Cov(x, z)\\
+Cov(y,x) & Var(y) & Cov(y, z)\\
+Cov(z,x) & Cov(z,y) & Var(z)
+\end{pmatrix}
+$$
+
 
 $$
 \left[\begin{array}{ccc} 

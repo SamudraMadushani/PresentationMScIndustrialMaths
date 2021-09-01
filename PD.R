@@ -245,7 +245,7 @@ FBVZW1<-pcsW %>%
 FBVZW1<-FBVZW1+ theme(legend.position = "bottom",legend.box = "vertical")+
   labs(colour = NULL)
 
-(FBVZW|FBVZW1)
+#(FBVZW|FBVZW1)
 
 
 
