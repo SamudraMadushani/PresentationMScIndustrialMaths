@@ -281,7 +281,6 @@ class: inverse center middle
 ---
 # Time domain visualization-Districts
 
-
 ```{r ,echo=FALSE, code=readLines("PD.R"),echo=FALSE,results='hide',message=FALSE,warning=FALSE}
 ```
 
@@ -414,7 +413,7 @@ Dengue_features
 
 # Feature-based visualization
 
-```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '75%', out.height = '40%',fig.height=9, fig.width=16}
+```{r figurechapter09FB2, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '90%', out.height = '70%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/FES2.JPG")
 ```
 
@@ -444,16 +443,7 @@ Cov(z,x) & Cov(z,y) & Var(z)
 \end{pmatrix}
 $$
 
-
-$$
-\left[\begin{array}{ccc} 
-Var(x) & Cov(x,y) & Cov(x, z)\\
-Cov(y,x) & Var(y) & Cov(y, z)\\
-Cov(z,x) & Cov(z,y) & Var(z)
-\end{array}\right]
-$$ 
-
---
+---
 
 #### Compute Eigenvalues and Eigenvectors of covariance matrix
 
@@ -480,21 +470,46 @@ pcs<-Dengue_features%>% dplyr::select(-c(1,2,31,33,35,37)) %>% prcomp(scale = TR
   augment(Dengue_features)
 ```
 
+---
+
+class: inverse center middle
+
+# Feature-based visualization
 
 ---
 
-# Feature-based visualization 
-
-```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=8, fig.width=16}
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/PP1.JPG")
 ```
 
 ---
 
-# Feature-based visualization 
-
-```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=8, fig.width=16}
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
 knitr::include_graphics("Figures/PP2.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP3.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP4.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP5.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP6.JPG")
 ```
 
 ---

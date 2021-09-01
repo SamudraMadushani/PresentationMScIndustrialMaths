@@ -236,7 +236,7 @@ FBVZW<-FBVZW+ theme(legend.position = "bottom",legend.box = "vertical")+scale_co
 
 FBVZW1<-pcsW %>%
   ggplot(aes(x = .fittedPC1, y = .fittedPC2, col = trend_strength, label=Districts)) +
-  geom_point(aes(size=trend_strength)) +
+  geom_point(aes(size=trend_strength,col = trend_strength)) +
   theme(aspect.ratio = 1)+
   geom_text_repel(aes(label=Districts), max.overlaps = Inf)+
   labs(x="PC1", y = "PC2",title = "Trend strength")+scale_color_viridis(option = "A")+
@@ -247,6 +247,6 @@ FBVZW1<-FBVZW1+ theme(legend.position = "bottom",legend.box = "vertical")+
 
 #(FBVZW|FBVZW1)
 
-
+#Wt<-Dengue_Districts%>%dplyr::filter(Province=="Western")%>%autoplot(Counts)
 
 
