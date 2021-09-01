@@ -248,5 +248,3 @@ FBVZW1<-FBVZW1+ theme(legend.position = "bottom",legend.box = "vertical")+
 #(FBVZW|FBVZW1)
 
 #Wt<-Dengue_Districts%>%dplyr::filter(Province=="Western")%>%autoplot(Counts)
-
-
