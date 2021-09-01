@@ -593,43 +593,31 @@ TEM
 
 ---
 
-# Temporal hierarchical time series features
-
-```{r}
+```{r ,echo=FALSE}
 library(tsfeatures)
 Temporal_DengueFeatures<-tsfeatures(aggts_total)
-Temporal_DengueFeatures
+pr1<-prcomp(Temporal_DengueFeatures[,-c(1,10,11,12,20)],scale=TRUE)
+as.data.frame(pr1$rotation)
 ```
 
 ---
 
-# Excluded features from PCA
-
-
----
-
-```{r}
-pr<-prcomp(Temporal_DengueFeatures[,-c(1,10,11,12,20)],scale=TRUE)
-```
+# Principal Component Analysis
 
 ```{r ,echo=FALSE}
-data.frame(pr$rotation)
+fviz_eig(pr1)
 ```
 
 ---
 
-# Feature-based visualization
-
-```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=8, fig.width=16}
-(TEMFBV|TEMFBV1)
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP16.JPG")
 ```
 
 ---
 
-# Feature-based visualization
-
-```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=8, fig.width=16}
-(TEMFBV2|TEMFBV3)
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP17.JPG")
 ```
 
 ---

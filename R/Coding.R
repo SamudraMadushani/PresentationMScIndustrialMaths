@@ -107,7 +107,7 @@ LEGEND<- LEGEND+ scale_fill_manual(breaks = c("low", "high"),
                                    values=c("#40004b","#e08214")) +
   theme(legend.position = "none")
 
-
+Ym<-autoplot(aggts_total[[5]],col="#66a61e") + labs(y = "Counts",x="Week",title="Yearly")+geom_vline(xintercept = c(2019,2020))
 
 
 
