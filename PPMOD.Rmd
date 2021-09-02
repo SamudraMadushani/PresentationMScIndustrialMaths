@@ -622,6 +622,85 @@ knitr::include_graphics("Figures/PP17.JPG")
 
 ---
 
+# Change point analysis
+
+* Change point detection is the process of identifying the time point, in which properties of data suddenly change.
+
+.pull-left[
+#### Changes in mean 
+
+```{r ,echo=FALSE}
+x=1:500
+z=c(rnorm(100,1,sd=0.5),rnorm(150,0,sd=0.5),rnorm(200,2,sd=0.5),rnorm(50,0.5,sd=0.5))
+plot(x,z,type='l',xlab='',ylab='',col='green')
+lines(x=1:100,y=rep(1,100),col='red',lwd=3)
+lines(x=101:250,y=rep(0,150),col='red',lwd=3)
+lines(x=251:450,y=rep(2,200),col='red',lwd=3)
+lines(x=451:500,y=rep(0.5,50),col='red',lwd=3)
+```
+
+]
+.pull-right[
+#### Changes in variance
+
+```{r ,echo=FALSE}
+x=1:500
+z=c(rnorm(100,0,sd=0.1),rnorm(150,0,sd=0.7),rnorm(200,0,sd=0.25),rnorm(50,0,sd=1))
+plot(x,z,type='l',xlab='',ylab='',col='green')
+```
+
+]
+
+---
+
+# Change point model for changes in mean
+
+For data $z_{1}, z_{2},\dots, z_{n}$, if change points exist at $\tau_{1}, \tau_{2}, \dots, \tau_{k}$, then 
+
+$$z_{t}=
+    \begin{cases}
+    \mu_{1} &   1\leq t \leq \tau_1 \\ 
+    \mu_2 & \tau_1 < t \leq \tau_2 \\
+    \vdots & \vdots \\
+    \mu_{k+1} & \tau_k < t \leq \tau_{k+1}=n
+    \end{cases}$$
+
+* Pruned Exact Linear Time (PELT) method (Killick et al. (2012))
+
+\begin{align}
+\sum_{i=1}^{k+1}{\left[\mathcal{C}(z_{(\tau_{i-1}+1):\tau_i})\right] + \lambda f(k)}
+\end{align}
+
+* This function depends on the data just through a sum of a *cost* for each segment.  
+
+* Penalty term that depends on the number of change points.
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP18.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP19.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP20.JPG")
+```
+
+---
+
+```{r ,echo=FALSE, out.width = '100%', out.height = '100%',fig.height=9, fig.width=16}
+knitr::include_graphics("Figures/PP21.JPG")
+```
+
+---
+
 class: inverse center middle
 
 ```{r figurechapter09N, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '100%',fig.height=5, fig.width=10}

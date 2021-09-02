@@ -192,7 +192,8 @@ TEMFBV3<-hwl_pca %>%
   ggplot(aes(x=.fittedPC1, y=.fittedPC2,label=Series,col=x_acf1))+
   geom_text_repel(aes(label=Series), max.overlaps = Inf)+
   geom_point(aes(col=x_acf1,size=x_acf1))+guides(size = FALSE)+
-  labs(x="PC1", y = "PC2",title = "x_acf1")
+  labs(x="PC1", y = "PC2",title = "acf1")+
+  theme(aspect.ratio = 1)
 
 TEMFBV4<-hwl_pca %>%
   ggplot(aes(x=.fittedPC1, y=.fittedPC2,label=Series,col=seasonal_strength))+
