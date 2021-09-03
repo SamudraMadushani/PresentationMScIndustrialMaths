@@ -4,7 +4,7 @@ title: "Hierarchical Forecasting of Dengue Incidence in Sri Lanka"
 author: 
   - "L. S. Madushani"
   - "IM 229"
-date: "Supervisor: Dr. Thiyanga S Talagala"
+date: "Supervisor: Dr. Thiyanga S. Talagala"
 output:
   xaringan::moon_reader:
     css: xaringan-themer.css
@@ -60,25 +60,29 @@ knitr::include_graphics("Figures/INT.JPG")
 
 ---
 
+# Objectives
+
+### Main objective
+
+* Forecast dengue incidence in Sri Lanka using Spatio-temporal structure of dengue incidence.
+
+--
+
+### Specific objectives
+
+* Introduce a novel feature-based visualization approach to identify properties of time series. 
+
+--
+
+* Automate the process of reading PDF files.
+
+---
+
 class: inverse center middle
 
 ```{r figurechapter02, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '100%', out.height = '100%',fig.height=5, fig.width=10}
 knitr::include_graphics("Figures/F1.JPG")
 ```
-
----
-
-# Objectives
-
-* Dengue incidence forecasting for districts, provinces, and whole country.
-
---
-
-* Data visualization
-
---
-
-* Automate the process of reading PDF files.
 
 ---
 
@@ -285,8 +289,8 @@ class: inverse center middle
 ```
 
 
-```{r figurechapter09A, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '90%', out.height = '100%',fig.height=8, fig.width=14}
-knitr::include_graphics("Figures/DP.JPG")
+```{r figurechapter09A, echo=FALSE, fig.align = 'center',message=FALSE, out.width = '90%', out.height = '100%',fig.height=7, fig.width=14}
+knitr::include_graphics("Figures/DP1.JPG")
 ```
 
 ---
