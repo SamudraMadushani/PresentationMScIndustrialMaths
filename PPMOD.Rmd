@@ -669,15 +669,6 @@ $$z_{t}=
     \mu_{k+1} & \tau_k < t \leq \tau_{k+1}=n
     \end{cases}$$
 
-* Pruned Exact Linear Time (PELT) method (Killick et al. (2012))
-
-\begin{align}
-\sum_{i=1}^{k+1}{\left[\mathcal{C}(z_{(\tau_{i-1}+1):\tau_i})\right] + \lambda f(k)}
-\end{align}
-
-* This function depends on the data just through a sum of a *cost* for each segment.  
-
-* Penalty term that depends on the number of change points.
 
 ---
 
@@ -967,3 +958,17 @@ Slides created via the R packages:
 [gadenbuie/xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
 
 The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
+---
+
+* Pruned Exact Linear Time (PELT) method (Killick et al. (2012))
+
+\begin{align}
+\sum_{i=1}^{k+1}{\left[\mathcal{C}(z_{(\tau_{i-1}+1):\tau_i})\right] + \lambda f(k)}
+\end{align}
+
+* This function depends on the data just through a sum of a *cost* for each segment.  
+
+* Penalty term that depends on the number of change points.
+
+---
