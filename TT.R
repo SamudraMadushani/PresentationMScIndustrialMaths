@@ -130,7 +130,7 @@ accuracy(reconciled[[1]],aggts_total[[1]])[,"MASE"]
 
 # Visualization of model performance-Weekly series
 
-```{r ,echo=FALSE}
+
 library(readxl)
 library(broom)
 Weekly_20AD<- read_excel("C:/Users/USER/Desktop/Book1.xlsx")
